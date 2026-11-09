@@ -3,6 +3,7 @@
 ## Binôme
 
 - Beauvais Lucas
+- Henin Aryeh
 - Guirlinger Quentin
 
 Bachelor Cybersécurité, 1re année.
