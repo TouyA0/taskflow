@@ -860,3 +860,112 @@ Fichier modifié : app.js.
 **Remarqué :** il nous a prévenus que la case perd le focus quand on navigue au clavier. On accepte : c'est un petit défaut, et le code est bien plus simple.
 
 **Pourquoi :** en relisant le code, deux endroits étaient plus compliqués que nécessaire. On a fait simplifier parce qu'on veut pouvoir expliquer chaque ligne à l'oral.
+
+## Prompt 12 · Sprint 2 : sauvegarde et mise en forme (Claude Code)
+
+**Prompt :**
+```
+Sprint 2 : sauvegarde et mise en forme.
+
+1. Crée storage.js, le seul fichier qui lit et écrit dans le localStorage, et charge-le avant app.js dans index.html.
+   - Les tâches sont rangées sous la clé taskflow_taches_<identifiant>, comme dans le README. Les comptes n'existent pas encore : pour l'instant, utilise un identifiant temporaire "invite" écrit à un seul endroit, pour qu'on puisse brancher la connexion au sprint 3 sans tout réécrire.
+   - La lecture se fait dans un try/catch : si la clé n'existe pas ou si les données sont cassées, on repart d'un tableau vide sans planter.
+   - app.js charge les tâches au démarrage et les sauvegarde après chaque ajout, modification, coche et suppression.
+
+2. Refais style.css plus simplement, sans mettre display: block sur tous les éléments, pour ne plus avoir besoin de la règle [hidden] ni des exceptions pour la liste.
+   - Chaque catégorie a sa propre couleur (cours, perso, projet), la même partout dans l'app.
+   - Les tâches terminées restent barrées.
+   - Une mise en page propre et lisible, qui marche aussi sur un écran de téléphone, sans en faire trop.
+```
+
+**Résultat :**
+```
+Je crée storage.js, je branche la sauvegarde dans app.js, je refais style.css, puis je teste en localhost : rechargement, données cassées, écran de téléphone.
+
+Sprint 2 terminé : les tâches restent après un rechargement, et style.css est refait. Aucun commit.
+
+Fichiers
+Créé : storage.js
+Modifiés : index.html, app.js, style.css
+Ce que j’ai fait
+
+Sauvegarde
+
+storage.js contient chargerTaches() et sauvegarderTaches(). Aucun autre fichier ne touche au localStorage.
+"invite" est écrit une seule fois, dans IDENTIFIANT_ACTUEL. Au sprint 3, seul cet endroit changera.
+Lecture dans un try/catch. Clé absente ou JSON invalide : [].
+tacheValide() vérifie aussi chaque tâche relue. Sans ça, un JSON valide comme [{"id":1}] passerait le try/catch et ferait planter l’affichage.
+app.js charge au démarrage et sauvegarde après ajout, modification, coche et suppression.
+
+CSS
+
+display: grid sur le formulaire remplace les display: block : chaque champ a sa ligne, en pleine largeur. La règle [hidden] et les exceptions de la liste ont disparu.
+Une tâche a une bande de couleur à gauche : bleu pour cours, vert pour perso, orange pour projet. Ces couleurs sont définies une seule fois, via la classe categorie-... ajoutée par app.js.
+Les tâches terminées restent barrées.
+3 cas de test à la main
+
+Lancer avec Live Server.
+
+Rechargement : ajouter une tâche par catégorie, en cocher une, en modifier une, en supprimer une, puis appuyer sur F5. Attendu : la liste est identique, la tâche cochée est toujours barrée, chaque catégorie a sa couleur.
+Téléphone : F12, mode appareil mobile, largeur 375 px, ajouter une tâche avec un titre de 100 caractères sans espace. Attendu : pas de défilement horizontal, le titre passe à la ligne.
+Cas limite, données cassées : F12, onglet Application, Local Storage, remplacer la valeur de taskflow_taches_invite par {cassé, puis F5. Attendu : liste vide, pas d’erreur, et on peut ajouter une tâche.
+Vérifié
+
+Tests par script en localhost réussis :
+
+sauvegarde après chaque action et relecture après rechargement ;
+10 cas de clé absente ou de données cassées, sans erreur console ;
+à 375 px : aucun débordement, contrôlé aussi par capture d’écran.
+
+Risques :
+
+Une seule tâche invalide vide toute la liste, comme demandé, et la sauvegarde suivante écrase les anciennes données.
+localStorage plein non géré (point reporté du README) : l’erreur part en console, l’affichage reste correct, mais la tâche n’est pas sauvegardée.
+```
+
+Fichiers : storage.js créé ; index.html, app.js et style.css modifiés (le code est dans le commit du sprint 2).
+
+**Gardé :** tout. Les tâches restent après un rechargement, et seul storage.js touche aux données enregistrées. Le nom « invite » n'est écrit qu'à un endroit, donc on pourra brancher les comptes facilement au sprint 3. Le CSS est plus simple qu'avant, et chaque catégorie a sa couleur.
+
+**Remarqué :** il a ajouté de lui-même une vérification de chaque tâche relue. On ne l'avait pas demandée ici, mais c'était une des corrections décidées lors de notre audit, donc on la garde.
+
+**Vérifié nous-mêmes :** on a rechargé la page après plusieurs actions, testé sur un écran de téléphone, et abîmé les données à la main dans les outils développeur : l'app ne plante pas.
+
+**Pourquoi :** on a préparé la sauvegarde pour les comptes dès maintenant, pour ne pas devoir tout réécrire au sprint 3.
+
+## Prompt 13 · Ne plus perdre toutes les tâches (Claude Code)
+
+**Prompt :**
+```
+Dans storage.js, au lieu de tout vider quand une seule tâche est invalide, garde seulement les tâches valides et ignore les autres. Ne change rien d'autre.
+```
+
+**Résultat :**
+```
+Je remplace le test dans chargerTaches(), puis je reteste en localhost.
+
+chargerTaches() garde maintenant les tâches valides et ignore les autres. Aucun commit.
+
+Fichier modifié
+storage.js
+Ce que j’ai fait
+
+donnees.every(tacheValide) est remplacé par donnees.filter(tacheValide). Si les données ne sont pas un tableau, ou si le JSON est cassé, le résultat reste [].
+
+3 cas de test à la main
+
+Lancer avec Live Server, ajouter 2 tâches, puis F12, onglet Application, Local Storage, clé taskflow_taches_invite.
+
+Une tâche invalide : dans la valeur, changer "priorite":"haute" (ou la valeur présente) d’une seule tâche en "priorite":"urgente", puis F5. Attendu : seule l’autre tâche s’affiche, sans erreur.
+JSON cassé : remplacer toute la valeur par {cassé, puis F5. Attendu : liste vide, sans erreur, et on peut ajouter une tâche.
+Cas limite, éléments qui ne sont pas des tâches : remplacer la valeur par [null, 3, {"id":1}], puis F5. Attendu : liste vide, sans erreur.
+Vérifié
+
+Tests par script en localhost réussis sur 10 cas : clé absente, JSON cassé, non-tableau, tableau vide, tout invalide, tout valide, mélange. Dans le mélange de 8 éléments, les 3 tâches valides sont gardées, avec leur statut, et se modifient normalement. Aucune erreur console.
+
+Risque : les tâches ignorées restent dans le localStorage jusqu’à la prochaine sauvegarde. Après un ajout, une coche, une modification ou une suppression, elles sont effacées définitivement.
+```
+
+**Gardé :** la correction. Maintenant, une seule tâche abîmée ne fait plus disparaître toutes les autres.
+
+**Pourquoi :** il nous avait prévenus lui-même du risque. Avec l'ancienne version, une seule tâche abîmée vidait la liste, et la sauvegarde suivante effaçait tout pour de bon. C'est justement ce que notre audit voulait éviter.

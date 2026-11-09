@@ -1,5 +1,5 @@
-// Pour l'instant, les tâches restent en mémoire : elles disparaissent au rechargement
-let taches = [];
+// Au démarrage, on reprend les tâches enregistrées
+let taches = chargerTaches();
 
 const TITRE_MAX = 100;
 
@@ -88,6 +88,7 @@ function commencerModification(id) {
 function changerStatut(id, estTerminee) {
   trouverTache(id).statut = estTerminee ? "terminee" : "a_faire";
   afficherTaches();
+  sauvegarderTaches(taches);
 }
 
 function supprimerTache(id) {
@@ -102,6 +103,7 @@ function supprimerTache(id) {
     reinitialiserFormulaire();
   }
   afficherTaches();
+  sauvegarderTaches(taches);
 }
 
 // Transforme "2026-11-15" en "15/11/2026"
@@ -131,6 +133,8 @@ function afficherTaches() {
   taches.forEach(function (tache) {
     const element = document.createElement("li");
     element.classList.toggle("terminee", tache.statut === "terminee");
+    // La couleur de chaque catégorie est définie dans style.css
+    element.classList.add("categorie-" + tache.categorie);
 
     const caseTerminee = document.createElement("input");
     caseTerminee.type = "checkbox";
@@ -207,6 +211,10 @@ formulaire.addEventListener("submit", function (evenement) {
 
   reinitialiserFormulaire();
   afficherTaches();
+  sauvegarderTaches(taches);
 });
 
 boutonAnnuler.addEventListener("click", reinitialiserFormulaire);
+
+// Affiche les tâches chargées au démarrage
+afficherTaches();
