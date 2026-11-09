@@ -48,7 +48,7 @@ TaskFlow est une petite application web de gestion de tâches, réalisée en HTM
 - Pas de serveur ni de base de données : stockage dans le localStorage.
 - Uniquement des fonctionnalités déjà présentes dans le navigateur (dont l'API Web Crypto).
 - Pas d'outil de build.
-- L'API Web Crypto n'est garantie que dans un contexte sécurisé (`localhost` ou HTTPS) : on lance donc toujours l'application en `localhost` avec Live Server.
+- L'API Web Crypto n'est garantie que dans un contexte sécurisé (`localhost` ou HTTPS). Dans nos tests, l'application marche aussi en ouvrant `index.html` directement, mais on conseille Live Server. Attention : les comptes et les tâches ne sont pas partagés entre les deux façons d'ouvrir l'application.
 
 ## Lancer le projet
 

@@ -139,7 +139,7 @@ Ce qu'une connexion côté navigateur protège vraiment
 
 **Rejeté :** chiffrer toutes les tâches, trop compliqué pour nous. On en parlera à l'oral.
 
-**À vérifier :** elle dit que l'app ne marche pas si on ouvre le fichier directement. On le testera, mais de toute façon on utilise Live Server.
+**Vérifié :** elle dit que l'app ne marche pas si on ouvre le fichier directement. On a testé à la fin de la séance 2 : c'est faux, tout marche aussi sans Live Server.
 
 **Pourquoi :** en lui demandant de se critiquer, on a vu tout ce qu'elle avait décidé toute seule.
 
@@ -432,7 +432,7 @@ Tout ce qui est marqué « Non » a la même cause : l'utilisateur contrôle ent
 
 **Reporté :** quelques cas rares, trop poussés pour 3 séances. On les met dans les limites.
 
-**À vérifier :** elle répète sa remarque sur l'ouverture directe du fichier. Toujours à tester.
+**Vérifié :** elle répète sa remarque sur l'ouverture directe du fichier. On a testé : c'était faux (voir le prompt 3). Elle l'a dit trois fois avec assurance, donc répéter une chose ne la rend pas vraie : il faut tester.
 
 **Pourquoi :** lui faire jouer un autre groupe qui nous audite a trouvé des failles qu'on n'aurait pas vues.
 
@@ -1349,4 +1349,3 @@ Les deux nouvelles limites sont dans « Points reportés », car elles ne demand
 - **Ce qui a marché :** avancer étape par étape. Il testait tout seul et nous prévenait de ses ajouts et de ses limites.
 - **Ce qu'on a corrigé :** la priorité par défaut, deux bouts de code trop compliqués, et un problème qui pouvait effacer toutes les tâches.
 - **Ce qu'on retient :** il va vite, mais c'est à nous de relire et de tester.
-- **Pour la séance 3 :** relire tout le code ensemble pour pouvoir l'expliquer, et préparer la démo des limites.
