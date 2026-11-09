@@ -1,6 +1,6 @@
 # Journal de prompts — TaskFlow
 
-Tous les prompts de la séance 1 ont été faits dans une seule conversation Claude, pour qu'elle garde le contexte d'un prompt à l'autre.
+On a fait tous les prompts de la séance 1 dans la même conversation avec Claude, pour qu'elle se souvienne de ce qu'on avait dit avant.
 
 ## Prompt 1 · Questions d'abord (Claude)
 
@@ -28,11 +28,11 @@ Avant d'écrire les user stories, pose-moi 3 questions sur l'app qui pourraient 
 3. Les catégories sont-elles fixes ou personnalisables ? On garde uniquement cours, perso et projet, une seule catégorie par tâche ? Ou l’utilisateur peut-il créer ses propres catégories et choisir leur couleur ? Et le filtre par catégorie s’ajoute-t-il au filtre par statut ?
 ```
 
-**Gardé :** les 3 questions. Elles étaient toutes utiles, surtout celle sur les comptes, on n'y avait pas vraiment pensé au départ.
+**Gardé :** les 3 questions. Elles étaient toutes utiles, surtout celle sur les comptes, on n'y avait pas pensé.
 
-**Modifié / rejeté :** rien. Pour les catégories, on a choisi de les garder fixes, sinon ça devenait trop gros pour nous.
+**Modifié / rejeté :** rien. Pour les catégories, on les garde fixes, sinon c'était trop pour nous.
 
-**Pourquoi :** on voulait que l'IA nous pose des questions avant d'écrire les stories, pour éviter qu'elle invente le projet à notre place. Nos réponses (dans le prompt 2) ont décidé comment on range les tâches par compte et comment marchent la session et le blocage.
+**Pourquoi :** on voulait qu'elle nous pose des questions avant d'écrire, pour qu'elle n'invente pas le projet à notre place. Nos réponses (dans le prompt 2) ont décidé comment on gère les comptes, la connexion et le blocage.
 
 ## Prompt 2 · Génération des user stories (Claude)
 
@@ -71,11 +71,11 @@ Exemple :
 Un point à garder en tête pour la soutenance, vu votre filière : tout ce qui est dans le localStorage est lisible et modifiable depuis les outils développeur. La connexion et le blocage sont donc pédagogiques, pas une vraie protection. Vous pouvez quand même éviter de stocker les mots de passe en clair en les hachant avec l’API Web Crypto (SHA-256). Elle est intégrée au navigateur, donc ce n’est pas une bibliothèque externe, mais elle exige d’ouvrir l’app en localhost ou en HTTPS, pas en file://. Ça peut faire un critère en plus pour la story 8.
 ```
 
-**Gardé :** les 10 stories comme point de départ. Elles respectent le cadre (pas de serveur, pas de bibliothèque) et nos réponses. On a bien aimé que la 9 ne dise pas si c'est l'identifiant ou le mot de passe qui est faux, comme ça on ne peut pas deviner quels comptes existent. On garde aussi l'idée de hacher le mot de passe avec Web Crypto.
+**Gardé :** les 10 stories comme base. Elles respectent les règles du projet et nos réponses. On aime bien que la 9 ne dise pas si c'est l'identifiant ou le mot de passe qui est faux : comme ça, personne ne peut deviner quels comptes existent. On garde aussi son idée de ne pas enregistrer le mot de passe en clair.
 
-**Modifié / rejeté :** rien pour l'instant. Le prof veut 5 à 8 stories, donc on savait qu'il faudrait en fusionner après (on pensait à 2 + 4 et 6 + 7). L'IA a ajouté toute seule une confirmation avant de supprimer (story 4). On ne l'avait pas demandée, mais on la garde, c'est pratique.
+**Modifié / rejeté :** rien pour l'instant. Le prof veut 5 à 8 stories, donc on savait qu'il faudrait en regrouper après. Elle a ajouté d'elle-même une confirmation avant de supprimer une tâche : on ne l'avait pas demandée, mais on la garde.
 
-**Pourquoi :** on a demandé 10 stories exprès, pour faire le tri nous-mêmes au lieu de prendre directement ce qu'elle propose.
+**Pourquoi :** on a demandé 10 stories exprès, pour faire le tri nous-mêmes au lieu de tout prendre.
 
 ## Prompt 3 · Hypothèses et auto-critique (Claude)
 
@@ -133,15 +133,15 @@ Ce qu'une connexion côté navigateur protège vraiment
 - En résumé, c'est un contrôle d'accès « d'interface », pas une vraie sécurité. Pour protéger réellement les données sans serveur, il faudrait chiffrer les tâches avec une clé dérivée du mot de passe (PBKDF2 + AES-GCM, toujours via Web Crypto). C'est faisable, mais probablement hors de portée pour 3 séances. Le dire clairement à l'oral sera plus valorisé que de faire semblant que c'est sécurisé.
 ```
 
-**Gardé :** la plupart de ses hypothèses (confirmation avant suppression, 3 priorités, échéance pas obligatoire, recherche seulement sur le titre, catégorie obligatoire). On garde aussi ses remarques sur les stories trop grosses (la 9 et la 7), l'idée d'une « définition de fini » pour ne pas répéter « conservé après rechargement » partout, et toute la partie sur ce que la connexion protège ou pas, qu'on va remettre dans le README. Le point sur la faille XSS avec innerHTML est important pour nous, on le garde.
+**Gardé :** la plupart de ce qu'elle avait supposé (confirmation avant de supprimer, 3 niveaux de priorité, date pas obligatoire, recherche sur le titre, catégorie obligatoire). On garde aussi ses remarques sur les stories trop grosses, et l'idée d'écrire une seule fois la règle « tout reste enregistré après rechargement » au lieu de la répéter partout. Toute sa partie sur ce que la connexion protège ou pas ira dans le README. Et on retient le risque qu'un titre de tâche piégé exécute du code : il faudra afficher les textes de façon sûre.
 
-**Modifié :** deux choses n'étaient pas testables, donc on les a fixées nous-mêmes : la jauge (2 règles ou moins = faible, 3 = moyen, 4 = fort) et le blocage, qui se fait par compte et pas pour tout le navigateur. On ajoute aussi un sel au hachage, vu qu'elle dit elle-même qu'un SHA-256 sans sel se casse vite.
+**Modifié :** deux points n'étaient pas clairs, donc on les a fixés nous-mêmes : la jauge (2 règles ou moins = faible, 3 = moyen, 4 = fort) et le blocage, qui concerne un compte et pas tout le navigateur. On ajoute aussi un « sel » au mot de passe, parce qu'elle dit elle-même que sans ça il se retrouve vite.
 
-**Rejeté :** le chiffrement des tâches (PBKDF2 + AES-GCM). C'est trop compliqué pour nous en 3 séances, on en parlera à l'oral comme d'une limite.
+**Rejeté :** chiffrer toutes les tâches. C'est trop compliqué pour nous en 3 séances, on en parlera à l'oral comme d'une limite.
 
-**À vérifier :** elle dit que Web Crypto ne marche pas si on ouvre index.html directement (file://). On n'a pas encore testé, on le fera en séance 2 avec window.isSecureContext dans la console. De toute façon, on lance l'app avec Live Server, donc en localhost.
+**À vérifier :** elle dit que la partie sécurité ne marche pas si on ouvre le fichier index.html directement. On ne l'a pas encore testé, on le fera en séance 2. De toute façon, on lance l'app avec Live Server.
 
-**Pourquoi :** lui demander de se critiquer elle-même nous a montré tout ce qu'elle avait supposé sans nous demander. Sans ça, on aurait gardé une jauge sans seuils et un blocage pas clair.
+**Pourquoi :** lui demander de se critiquer nous a montré tout ce qu'elle avait décidé sans nous demander. Sans ça, on aurait eu une jauge et un blocage mal définis.
 
 ## Prompt 4 · Version finale des user stories (Claude)
 
@@ -192,13 +192,13 @@ Une story est terminée uniquement si :
 ```
 ````
 
-**Gardé :** les 8 stories et la définition de fini, qu'on a mises dans le README. Toutes nos décisions du prompt 3 ont bien été appliquées.
+**Gardé :** les 8 stories et la règle commune, qu'on a mises dans le README. Toutes nos décisions du prompt 3 y sont.
 
-**Modifié :** rien. On ne lui avait pas donné de règle pour Must / Should / Could, mais sa répartition nous va : la base en Must, ce que demande la consigne en Should, les bonus en Could.
+**Modifié :** rien. On ne lui avait pas dit comment classer les stories par priorité, mais son choix nous va : l'essentiel en premier, puis ce que demande la consigne, puis les bonus.
 
-**Remarqué :** on lui avait dit « sans rien ajouter » et elle a quand même ajouté deux critères : « les autres comptes peuvent toujours se connecter » (story 8) et « effacer la recherche réaffiche la liste filtrée » (story 7). On les garde parce qu'ils vont avec nos choix, mais ça montre qu'il faut tout relire.
+**Remarqué :** on lui avait dit de ne rien ajouter, et elle a quand même ajouté deux petits détails (stories 7 et 8). On les garde parce qu'ils vont avec nos choix, mais ça montre qu'il faut tout relire.
 
-**Pourquoi :** on lui a donné nos décisions une par une (garder, fusionner, séparer, enlever, préciser) pour que la version finale vienne de nous, et pas juste d'elle.
+**Pourquoi :** on lui a donné nos décisions une par une, pour que la version finale vienne de nous et pas juste d'elle.
 
 ## Prompt 5 · Structure de fichiers (Claude)
 
@@ -242,13 +242,13 @@ taskflow/
 - PROMPTS.md : journal des prompts utilisés avec l'IA et de ce que vous en avez gardé ou corrigé.
 ```
 
-**Gardé :** la structure avec les 2 fichiers en plus, storage.js et auth.js, et l'ordre de chargement des scripts (storage.js, puis auth.js, puis app.js).
+**Gardé :** la structure avec 2 fichiers en plus : un pour tout ce qui est enregistrement des données (storage.js) et un pour tout ce qui est sécurité (auth.js). On garde aussi l'ordre dans lequel les charger.
 
-**Modifié :** rien. On a juste décidé de faire une seule page index.html, avec la connexion, l'inscription et les tâches dans des sections qu'on affiche une par une, au lieu de faire plusieurs pages.
+**Modifié :** rien. On a juste choisi de faire une seule page, où la connexion, l'inscription et les tâches s'affichent l'une après l'autre, au lieu de plusieurs pages.
 
-**Rejeté :** rien, elle n'a proposé ni dossiers inutiles ni outil de build.
+**Rejeté :** rien, elle n'a rien proposé d'inutile.
 
-**Pourquoi :** avec un seul fichier qui touche au localStorage et un fichier à part pour la sécurité, le code sera plus clair et plus simple à vérifier pendant l'audit. Une seule page évite de recopier le HTML et de revérifier la connexion sur chaque page.
+**Pourquoi :** en séparant les données et la sécurité, le code sera plus clair et plus facile à vérifier pendant l'audit. Une seule page évite de répéter le même code partout.
 
 ## Prompt 6 · Modèle de données (Claude)
 
@@ -354,15 +354,15 @@ Deux points à garder en tête :
 - Il vous reste à décider si « Quentin » et « quentin » sont le même compte. Si oui, mettez l'identifiant en minuscules avant de le stocker et de le comparer.
 ````
 
-**Gardé :** les deux modèles et les trois clés localStorage. On aime bien l'idée de ranger les tâches avec une clé par utilisateur, au lieu de mettre un champ propriétaire dans chaque tâche. Le sel est bien tiré au hasard avec crypto.getRandomValues, un par compte.
+**Gardé :** les deux modèles (tâche et utilisateur) et la façon de ranger les données. On aime bien l'idée de ranger les tâches de chaque utilisateur à part, au lieu d'écrire le propriétaire dans chaque tâche.
 
-**Modifié :** on met l'identifiant en minuscules avant de le stocker, donc « Quentin » et « quentin », c'est le même compte. Dans le README, on a remplacé « quentin » par « etudiant1 » dans les exemples, parce que le prof ne veut pas de données personnelles réelles.
+**Modifié :** l'identifiant est mis en minuscules, donc « Quentin » et « quentin » c'est le même compte. Dans le README, on a remplacé « quentin » par « etudiant1 », parce que le prof ne veut pas de vraies données personnelles.
 
 **Rejeté :** rien.
 
-**Remarqué :** taskflow_session contient juste l'identifiant, donc n'importe qui peut le changer dans la console et se connecter comme quelqu'un d'autre. On garde ça pour l'audit du prompt 7.
+**Remarqué :** l'app retient juste le nom de la personne connectée, donc quelqu'un qui s'y connaît peut le changer et se connecter à la place d'un autre. On garde ça pour l'audit du prompt 7.
 
-**Pourquoi :** tout ce qui peut se calculer (couleur, ordre des priorités, jauge, blocage en cours) n'est pas stocké. Comme ça, les données et l'affichage ne peuvent pas se contredire.
+**Pourquoi :** on n'enregistre que ce qui est vraiment nécessaire. Le reste (couleurs, ordre des priorités, jauge) se calcule à l'affichage, comme ça rien ne peut se contredire.
 
 ## Prompt 7 · Critique du modèle de données (Claude)
 
@@ -428,15 +428,15 @@ Cas limites à prévoir
 Tout ce qui est marqué « Non » a la même cause : l'utilisateur contrôle entièrement son navigateur. Ce sont ces lignes qui doivent aller dans la partie « limites de sécurité » du README et de l'oral.
 ```
 
-**Gardé :** toutes les corrections marquées « Oui » qui concernent la sécurité ou le fait que l'app ne plante pas. On les fera en séance 2 : lire le localStorage dans un try/catch, vérifier que les valeurs sont autorisées, normaliser l'identifiant, utiliser textContent partout, refuser les titres et identifiants vides, mettre null si la date est vide, afficher le même message d'erreur si l'identifiant n'existe pas, passer par TextEncoder pour le mot de passe, et prévenir si crypto.subtle n'existe pas. Toutes les lignes « Non » vont dans les limites de sécurité du README.
+**Gardé :** tout ce qu'elle a marqué « Oui » et qui touche à la sécurité ou au fait que l'app ne plante pas. On le fera en séance 2 : ne pas planter si les données sont abîmées, vérifier les valeurs, nettoyer l'identifiant, afficher les textes de façon sûre, refuser les champs vides, et afficher le même message d'erreur que le compte existe ou pas. Tout ce qu'elle a marqué « Non » va dans les limites de sécurité du README.
 
-**Modifié :** on passe de SHA-256 à PBKDF2 pour hacher le mot de passe. C'est la même API Web Crypto, ce n'est pas beaucoup plus dur, et ça ralentit vraiment la force brute. On a aussi tranché les points qu'elle nous laissait : les dates passées sont acceptées, un caractère spécial c'est tout ce qui n'est ni une lettre ni un chiffre, et le titre fait 100 caractères maximum.
+**Modifié :** on change la méthode pour protéger le mot de passe, pour une méthode plus lente à casser (PBKDF2). Ce n'est pas beaucoup plus dur à faire et c'est bien plus sûr. On a aussi tranché les points qu'elle nous laissait : les dates passées sont acceptées, un caractère spécial c'est tout ce qui n'est ni une lettre ni un chiffre, et un titre fait 100 caractères maximum.
 
-**Reporté :** le numéro de version des données, les onglets multiples, le localStorage plein, l'expiration de session et la suppression de compte. Ce sont de vrais problèmes, mais trop poussés pour 3 séances, donc on les met dans les limites.
+**Reporté :** certains cas rares (plusieurs onglets ouverts, mémoire pleine, déconnexion automatique, suppression de compte…). Ce sont de vrais problèmes, mais trop poussés pour 3 séances, donc on les met dans les limites.
 
-**À vérifier :** elle répète que Web Crypto ne marche pas en file://. Toujours pas testé (voir prompt 3), on reste en localhost et on ajoutera un message si crypto.subtle n'existe pas.
+**À vérifier :** elle répète que la sécurité ne marche pas si on ouvre index.html directement. Toujours pas testé, on reste avec Live Server.
 
-**Pourquoi :** lui faire auditer son propre modèle a sorti des failles qu'on n'aurait pas trouvées seuls (session qu'on peut falsifier, blocage qu'on peut contourner, XSS). Et séparer ce qu'on peut corriger de ce qui demande un serveur nous donne directement la liste de travail pour la séance 2 et la partie limites pour l'oral.
+**Pourquoi :** lui faire jouer le rôle d'un autre groupe qui nous audite a trouvé des failles qu'on n'aurait pas vues seuls. Et séparer ce qu'on peut corriger de ce qui demanderait un serveur nous donne la liste de travail pour la séance 2 et la partie limites pour l'oral.
 
 ## Prompt 8 · Rédaction du README (Claude)
 
@@ -669,18 +669,194 @@ Dans une vraie application, un serveur stockerait les comptes et les tâches, v�
 L'IA a été utilisée pour préparer le projet (user stories, structure, modèle de données, audit). Les prompts utilisés et ce que nous avons gardé ou corrigé sont détaillés dans [PROMPTS.md](PROMPTS.md).
 ````
 
-**Gardé :** toute la structure et presque tout le contenu. Les limites de sécurité reprennent bien l'audit du prompt 7.
+**Gardé :** toute la structure et presque tout le contenu. La partie limites reprend bien l'audit du prompt 7.
 
 **Modifié :**
-- on a mis nos noms dans la partie Binôme ;
-- elle avait oublié le try/catch décidé au prompt 7, on l'a rajouté dans la phrase sur le localStorage ;
-- elle affirmait que l'app ne marche pas en file://, alors qu'on ne l'a pas vérifié. On a mis à la place que Web Crypto est garanti en localhost ou en HTTPS, et qu'on lance toujours l'app avec Live Server ;
-- elle a complété les stories 1, 3 et 5 avec nos décisions du prompt 7 (100 caractères, date passée ou vide, identifiant normalisé, PBKDF2). On garde, mais du coup elles ne sont plus exactement celles du prompt 4.
+- on a mis nos noms ;
+- elle avait oublié qu'on veut que l'app ne plante pas si les données sont abîmées, on l'a rajouté ;
+- elle affirmait que l'app ne marche pas en ouvrant index.html directement, alors qu'on ne l'a pas vérifié : on a juste écrit qu'on lance toujours l'app avec Live Server ;
+- elle a mis à jour certaines stories avec nos dernières décisions. On garde, mais elles ne sont plus exactement celles du prompt 4.
 
-**Pourquoi :** on lui a redonné nos dernières décisions dans le prompt, parce qu'après une longue conversation elle aurait pu reprendre une vieille version (SHA-256 au lieu de PBKDF2). Et on ne voulait pas laisser dans le README quelque chose qu'on n'a pas vérifié.
+**Pourquoi :** on lui a redonné nos dernières décisions, parce qu'après une longue conversation elle risquait de reprendre une vieille version. Et on ne voulait rien laisser dans le README qu'on n'a pas vérifié.
 
 ## Bilan de la séance 1
 
-- **Ce qui a bien marché :** les questions au début, et surtout quand on lui a demandé de se critiquer et d'auditer son modèle. C'est là qu'elle a trouvé des failles qu'on n'aurait pas vues seuls (session falsifiable, XSS, blocage contournable).
-- **Ce qu'on a dû corriger :** elle a ajouté des choses alors qu'on lui avait dit de ne rien ajouter (prompt 4), elle a oublié une de nos décisions dans le README (le try/catch), et elle a répété plusieurs fois une affirmation sur file:// qu'on n'a pas pu vérifier tout de suite.
-- **Pour la séance 2 :** donner le README comme contexte à Copilot ou Cursor, coder une story à la fois en respectant la définition de fini, et relire chaque fonction générée avant de la garder.
+- **Ce qui a bien marché :** les questions au début, et surtout quand on lui a demandé de se critiquer et de nous auditer. C'est là qu'elle a trouvé des failles qu'on n'aurait pas vues seuls.
+- **Ce qu'on a dû corriger :** elle a ajouté des choses alors qu'on lui avait dit de ne rien ajouter, elle a oublié une de nos décisions dans le README, et elle a répété plusieurs fois une affirmation qu'on n'a pas encore pu vérifier.
+- **Pour la séance 2 :** donner le README à l'IA de code, coder une story à la fois, et relire tout ce qu'elle génère avant de le garder.
+
+# Séance 2 · Coder l'application
+
+Pour cette séance, on a utilisé Claude Code (le mode agent : il crée et modifie les fichiers lui-même), dans une seule conversation. On lui donne une seule tâche à la fois, et on relit et teste tout avant de faire le commit nous-mêmes.
+
+## Prompt 9 · Sprint 1, étape 1 : ajouter et afficher une tâche (Claude Code)
+
+**Prompt :**
+```
+Tu es un développeur web qui nous aide à coder TaskFlow, notre projet de 1re année en binôme Cybersécurité.
+
+Tout le cahier des charges est dans README.md (user stories, structure des fichiers, modèle de données) : lis-le avant de commencer. On va coder l'app étape par étape, en 3 sprints, et je te donnerai une seule tâche à la fois.
+
+Règles à respecter pendant toute la conversation :
+- HTML, CSS et JavaScript natif uniquement : pas de framework, pas de bibliothèque, pas de npm ni de package.json, pas d'outil de build.
+- Fais uniquement ce que je te demande dans le prompt, rien de plus.
+- Les textes saisis par l'utilisateur sont toujours affichés avec textContent, jamais avec innerHTML.
+- Code simple et lisible pour des étudiants de 1re année, avec des commentaires courts en français.
+- Ne fais jamais de commit ni de push, c'est nous qui les faisons.
+- À la fin de chaque tâche, donne-moi : la liste des fichiers créés ou modifiés, une explication simple de ce que tu as fait, et 3 cas de test à faire à la main dans le navigateur, dont un cas limite.
+
+Sprint 1, étape 1 : crée index.html, style.css (juste le minimum pour que ce soit lisible) et app.js, pour pouvoir ajouter une tâche et l'afficher dans la liste.
+- Le formulaire contient : titre, description (facultative), priorité (basse, moyenne, haute), catégorie (cours, perso, projet) et échéance (facultative).
+- Respecte le modèle de tâche du README : id unique, titre, description, priorite, categorie, echeance (null si vide), statut "a_faire".
+- Un titre vide ou fait uniquement d'espaces est refusé avec un message, et le titre fait 100 caractères maximum.
+- Pour l'instant, les tâches restent seulement en mémoire dans un tableau : pas de localStorage, pas de connexion, ne crée pas encore storage.js ni auth.js.
+```
+
+**Résultat :**
+```
+Je lis le README, puis je crée index.html, style.css et app.js, et je teste dans le navigateur.
+
+Fichiers créés. Test dans le navigateur intégré : titre vide, espaces, ajout normal, injection HTML, 101 caractères.
+
+La tâche ne s’affiche pas dans ce test. Je vérifie d’abord si app.js est bien exécuté dans cette page.
+
+Le navigateur intégré affiche le fichier comme copie statique sans charger app.js, donc le problème vient du test et non du code. Je sers le dossier en localhost via un serveur temporaire, sans rien ajouter au projet.
+
+Étape 1 terminée : on peut ajouter une tâche et la voir dans la liste. Aucun commit.
+
+Fichiers créés (dans taskflow/)
+index.html
+style.css
+app.js
+Ce que j’ai fait
+Formulaire : titre, description, priorité, catégorie, échéance. Seul app.js est chargé.
+Validation : trim() retire les espaces autour du titre. Titre vide : message d’erreur. Plus de 100 caractères : message aussi. maxlength bloque la saisie, et app.js revérifie, car maxlength se retire dans les outils développeur.
+Modèle : chaque tâche suit le README, ajoutée au tableau taches. Échéance vide : null. Description vide : "". Statut : "a_faire".
+Id unique : basé sur Date.now(), augmenté de 1 si déjà pris.
+Affichage : la liste est reconstruite à chaque ajout avec createElement et textContent, jamais innerHTML. Date affichée en 31/01/2020.
+3 cas de test à la main
+
+Lancer avec Live Server.
+
+Ajout normal : titre Réviser le CSS, description Flexbox, priorité haute, catégorie projet, date au choix. Attendu : tâche visible tout de suite, date en JJ/MM/AAAA, formulaire vidé.
+Titre refusé : taper seulement des espaces, puis Ajouter. Attendu : « Le titre est obligatoire. », aucune tâche ajoutée.
+Cas limite, code dans le titre : saisir <img src=x onerror=alert(1)>, sans échéance. Attendu : texte affiché tel quel, pas d’image, pas d’alerte, « Échéance : aucune ».
+Vérifié
+
+Testé en localhost par script : titre vide, espaces, ajout complet, date passée, sans échéance, injection HTML, 100 caractères acceptés, 101 refusés (après retrait de maxlength), champs du modèle, ids uniques, aucune erreur console.
+
+Non vérifié : rendu visuel, la capture d’écran a échoué.
+
+Non fait : couleur des catégories, car hors de cette étape et CSS minimum demandé. Le critère de la story 1 l’exige, donc à prévoir avant de la déclarer finie.
+```
+
+Fichiers créés : index.html, style.css, app.js (le code est dans le commit du sprint 1).
+
+**Gardé :** tout le code. Il respecte nos règles : les textes sont affichés de façon sûre, une date vide devient null, et chaque tâche suit le modèle du README. On a bien aimé qu'il vérifie la limite de 100 caractères deux fois, dans la page et dans le code, parce que la limite de la page peut être retirée dans les outils développeur. Il a aussi testé tout seul un titre piégé avec du code, et rien ne s'exécute.
+
+**Modifié :** la priorité « moyenne » est mise par défaut, parce qu'après un ajout le formulaire revenait sur « basse ».
+
+**Remarqué :** il n'a pas pu tester l'affichage lui-même, donc on a fait les 3 tests à la main avec Live Server. Il nous a aussi prévenus qu'il manquait encore la couleur des catégories : on la fait au sprint 2, avec le CSS.
+
+**Pourquoi :** on a mis toutes nos règles dans le premier prompt pour ne pas avoir à les répéter, et on lui a demandé une seule étape à la fois pour pouvoir tout relire et tout comprendre.
+
+## Prompt 10 · Sprint 1, étape 2 : terminer, modifier et supprimer une tâche (Claude Code)
+
+**Prompt :**
+```
+Merci, l'étape 1 marche. Une petite correction d'abord : mets la priorité « moyenne » par défaut dans le formulaire, y compris après un ajout.
+
+Sprint 1, étape 2 : on termine les fonctions de base, toujours en mémoire, sans localStorage.
+
+1. Cocher une tâche comme terminée : une case à cocher sur chaque tâche passe son statut à "terminee", et la tâche s'affiche barrée. On peut la décocher pour la remettre "a_faire".
+2. Modifier une tâche : un bouton « Modifier » réutilise le même formulaire que l'ajout, avec tous les champs actuels pré-remplis (catégorie comprise), un bouton « Enregistrer » et un bouton « Annuler ». Les règles sont les mêmes qu'à la création (titre vide refusé, 100 caractères maximum) : si le titre est refusé, la tâche garde son ancien titre. Ne recopie pas la validation, mets-la dans une seule fonction utilisée pour l'ajout et pour la modification.
+3. Supprimer une tâche : un bouton « Supprimer » demande une confirmation avant de supprimer. Si on annule, la tâche reste.
+
+Garde le même style de code qu'à l'étape 1, et retrouve toujours une tâche par son id, jamais par sa position dans la liste.
+```
+
+**Résultat :**
+```
+Je fais la correction de la priorité, puis cocher, modifier et supprimer, avec une seule fonction de validation et une recherche par id. Ensuite je teste en localhost.
+
+Correction et étape 2 terminées, toujours en mémoire. Aucun commit.
+
+Fichiers modifiés (dans taskflow/)
+index.html
+style.css
+app.js
+Ce que j’ai fait
+Priorité par défaut : selected sur « moyenne ». formulaire.reset() y revient après chaque ajout.
+Cocher : la case passe le statut à "terminee" ou "a_faire". La classe CSS terminee barre le titre, la description, la priorité, la catégorie et l’échéance.
+Modifier : idEnModification indique le mode du formulaire : null pour ajouter, un id pour modifier. Le bouton devient « Enregistrer » et « Annuler » apparaît. L’id et le statut de la tâche ne changent pas.
+Validation : une seule fonction, validerTitre(), sert à l’ajout et à la modification. Titre refusé : la tâche garde son ancien titre et le formulaire reste en modification.
+Supprimer : confirm(), puis filter() sur l’id.
+Recherche par id : trouverTache(id), jamais par position.
+
+Trois ajouts que tu n’as pas demandés explicitement, mais nécessaires au bon fonctionnement :
+
+Le titre du formulaire devient « Modifier la tâche » en modification, sinon il resterait « Ajouter une tâche ».
+Supprimer la tâche en cours de modification remet le formulaire en mode ajout, sinon « Enregistrer » planterait.
+La règle CSS [hidden] { display: none; }, sinon « Annuler » resterait visible à cause du display: block de l’étape 1.
+3 cas de test à la main
+Cocher et modifier : ajouter une tâche, la cocher, puis la modifier et enregistrer. Attendu : les changements sont appliqués, la tâche reste cochée et barrée. La décocher : elle n’est plus barrée.
+Supprimer : cliquer « Supprimer », puis Annuler dans la fenêtre : la tâche reste. Recommencer et confirmer : elle disparaît, les autres ne bougent pas.
+Cas limite, titre vidé : cliquer « Modifier », remplacer le titre par des espaces, cliquer « Enregistrer ». Attendu : « Le titre est obligatoire. », le formulaire reste en modification. Cliquer « Annuler » : l’ancien titre est toujours dans la liste, le formulaire est vide avec priorité moyenne.
+Vérifié
+
+Tests par script en localhost réussis : les cas ci-dessus, 101 caractères refusés en modification, pré-remplissage complet, échéance null pré-remplie vide, suppression de la tâche en cours de modification, injection HTML en modification, aucune erreur console. Rendu contrôlé par capture d’écran.
+
+Non testé : un vrai clic dans la fenêtre confirm(), simulée par script. Couleur des catégories toujours absente (critère de la story 1).
+```
+
+Fichiers modifiés : index.html, style.css, app.js (le code est dans le commit du sprint 1).
+
+**Gardé :** tout. Il n'y a plus qu'une seule fonction pour vérifier le titre, et chaque tâche est retrouvée par son id. Quand on modifie une tâche, elle garde son id et reste cochée si elle l'était.
+
+**Remarqué :** on lui avait dit de ne rien faire de plus, et il a ajouté trois petites choses, mais il nous a prévenus et elles étaient nécessaires : le titre du formulaire qui change en mode modification, le formulaire qui se remet à zéro si on supprime la tâche en train d'être modifiée, et une règle CSS sans laquelle le bouton « Annuler » restait toujours visible. On les garde.
+
+**Vérifié nous-mêmes :** il avait seulement simulé la fenêtre de confirmation, donc on a testé le vrai clic sur Annuler : la tâche reste bien.
+
+**Pourquoi :** on lui a demandé exprès une seule fonction de validation et de passer par l'id, pour éviter les répétitions et les bugs quand l'ordre de la liste change, plus tard avec le tri.
+
+## Prompt 11 · Simplification du code (Claude Code)
+
+**Prompt :**
+```
+Avant le sprint 2, simplifie deux choses dans app.js, sans rien changer d'autre :
+1. Remplace les deux Object.assign du formulaire par des affectations écrites champ par champ, plus faciles à lire pour nous.
+2. Quand on coche ou décoche une tâche, change son statut puis appelle simplement afficherTaches(), comme pour les autres boutons, au lieu de modifier la classe CSS à la main.
+```
+
+**Résultat :**
+```
+Je fais les deux remplacements dans app.js, puis je reteste en localhost.
+
+Les deux simplifications sont faites. Aucun commit.
+
+Fichier modifié
+app.js
+Ce que j’ai fait
+Fin des Object.assign : l’ajout écrit chaque champ dans l’objet passé à taches.push({...}). La modification fait tache.titre = champs.titre, et pareil pour les 4 autres champs. L’id et le statut ne sont toujours pas touchés.
+Cocher : changerStatut() change le statut puis appelle afficherTaches(). La modification manuelle de la classe dans le clic est retirée. La ligne classList.toggle dans afficherTaches() reste : c’est elle qui barre les tâches terminées à chaque affichage.
+
+Effet de bord du point 2 : la liste est reconstruite à chaque coche, donc la case perd le focus. Au clavier, il faut repartir du début de la page avec Tab. À la souris, aucun changement.
+
+3 cas de test à la main
+Cocher et décocher : ajouter deux tâches, cocher la première. Attendu : elle seule est barrée, sa case reste cochée. La décocher : elle n’est plus barrée.
+Modifier une tâche cochée : cocher une tâche, cliquer « Modifier », changer tous les champs, cliquer « Enregistrer ». Attendu : nouvelles valeurs affichées, tâche toujours cochée et barrée.
+Cas limite, cocher pendant une modification : cliquer « Modifier » sur la tâche A, taper un nouveau titre sans enregistrer, puis cocher la tâche B. Attendu : B est barrée, le formulaire garde le texte tapé et reste en modification sur A.
+Vérifié
+
+Tests par script en localhost réussis : ajout, coche et décoche, pré-remplissage, enregistrement, titre refusé, cas limite ci-dessus, suppression, aucune erreur console.
+
+Non testé : la navigation au clavier après une coche, déduite du fonctionnement de la reconstruction.
+```
+
+Fichier modifié : app.js.
+
+**Gardé :** les deux simplifications. Maintenant, chaque champ de la tâche est écrit un par un, et cocher une tâche marche comme les autres boutons : on change la tâche, puis on réaffiche la liste.
+
+**Remarqué :** il nous a prévenus que la case perd le focus quand on navigue au clavier. On accepte : c'est un petit défaut, et le code est bien plus simple.
+
+**Pourquoi :** en relisant le code, deux endroits étaient plus compliqués que nécessaire. On a fait simplifier parce qu'on veut pouvoir expliquer chaque ligne à l'oral.

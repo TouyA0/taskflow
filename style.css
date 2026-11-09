@@ -1,0 +1,71 @@
+body {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  font-family: sans-serif;
+}
+
+/* Chaque champ du formulaire sur sa propre ligne */
+label,
+input,
+textarea,
+select,
+button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input,
+textarea,
+select {
+  margin-bottom: 12px;
+  padding: 6px;
+}
+
+button {
+  padding: 8px;
+}
+
+/* Sans cette règle, le display: block ci-dessus afficherait les boutons cachés */
+[hidden] {
+  display: none;
+}
+
+#bouton-annuler {
+  margin-top: 8px;
+}
+
+#message-erreur {
+  color: #b00020;
+}
+
+#liste-taches {
+  padding: 0;
+  list-style: none;
+}
+
+#liste-taches li {
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #999;
+  /* Un long mot sans espace passe à la ligne au lieu de déborder */
+  overflow-wrap: anywhere;
+}
+
+#liste-taches p {
+  margin: 4px 0;
+}
+
+/* Dans la liste, la case et les boutons gardent leur taille normale */
+#liste-taches input,
+#liste-taches button {
+  display: inline-block;
+  width: auto;
+  margin: 0 8px 0 0;
+}
+
+.terminee strong,
+.terminee p {
+  text-decoration: line-through;
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskFlow</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>TaskFlow</h1>
+
+  <h2 id="titre-formulaire">Ajouter une tâche</h2>
+  <form id="formulaire-tache">
+    <label for="titre">Titre</label>
+    <input type="text" id="titre" maxlength="100">
+
+    <label for="description">Description (facultative)</label>
+    <textarea id="description" rows="3"></textarea>
+
+    <label for="priorite">Priorité</label>
+    <select id="priorite">
+      <option value="basse">Basse</option>
+      <option value="moyenne" selected>Moyenne</option>
+      <option value="haute">Haute</option>
+    </select>
+
+    <label for="categorie">Catégorie</label>
+    <select id="categorie">
+      <option value="cours">Cours</option>
+      <option value="perso">Perso</option>
+      <option value="projet">Projet</option>
+    </select>
+
+    <label for="echeance">Échéance (facultative)</label>
+    <input type="date" id="echeance">
+
+    <!-- Le message d'erreur est écrit ici par app.js -->
+    <p id="message-erreur" role="alert"></p>
+
+    <button type="submit" id="bouton-valider">Ajouter</button>
+    <button type="button" id="bouton-annuler" hidden>Annuler</button>
+  </form>
+
+  <h2>Mes tâches</h2>
+  <ul id="liste-taches"></ul>
+
+  <script src="app.js"></script>
+</body>
+</html>
