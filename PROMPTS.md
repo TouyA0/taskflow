@@ -1,6 +1,6 @@
 # Journal de prompts — TaskFlow
 
-On a fait tous les prompts de la séance 1 dans la même conversation avec Claude, pour qu'elle se souvienne de ce qu'on avait dit avant.
+Pour la séance 1, on a tout fait dans la même conversation avec Claude, pour qu'elle se souvienne de ce qu'on avait dit.
 
 ## Prompt 1 · Questions d'abord (Claude)
 
@@ -28,11 +28,11 @@ Avant d'écrire les user stories, pose-moi 3 questions sur l'app qui pourraient 
 3. Les catégories sont-elles fixes ou personnalisables ? On garde uniquement cours, perso et projet, une seule catégorie par tâche ? Ou l’utilisateur peut-il créer ses propres catégories et choisir leur couleur ? Et le filtre par catégorie s’ajoute-t-il au filtre par statut ?
 ```
 
-**Gardé :** les 3 questions. Elles étaient toutes utiles, surtout celle sur les comptes, on n'y avait pas pensé.
+**Gardé :** les 3 questions, elles étaient utiles. On n'avait pas pensé à celle sur les comptes.
 
-**Modifié / rejeté :** rien. Pour les catégories, on les garde fixes, sinon c'était trop pour nous.
+**Modifié / rejeté :** rien. On garde des catégories fixes, c'est plus simple pour nous.
 
-**Pourquoi :** on voulait qu'elle nous pose des questions avant d'écrire, pour qu'elle n'invente pas le projet à notre place. Nos réponses (dans le prompt 2) ont décidé comment on gère les comptes, la connexion et le blocage.
+**Pourquoi :** on voulait qu'elle pose des questions avant d'écrire, pour ne pas qu'elle invente le projet à notre place.
 
 ## Prompt 2 · Génération des user stories (Claude)
 
@@ -71,11 +71,11 @@ Exemple :
 Un point à garder en tête pour la soutenance, vu votre filière : tout ce qui est dans le localStorage est lisible et modifiable depuis les outils développeur. La connexion et le blocage sont donc pédagogiques, pas une vraie protection. Vous pouvez quand même éviter de stocker les mots de passe en clair en les hachant avec l’API Web Crypto (SHA-256). Elle est intégrée au navigateur, donc ce n’est pas une bibliothèque externe, mais elle exige d’ouvrir l’app en localhost ou en HTTPS, pas en file://. Ça peut faire un critère en plus pour la story 8.
 ```
 
-**Gardé :** les 10 stories comme base. Elles respectent les règles du projet et nos réponses. On aime bien que la 9 ne dise pas si c'est l'identifiant ou le mot de passe qui est faux : comme ça, personne ne peut deviner quels comptes existent. On garde aussi son idée de ne pas enregistrer le mot de passe en clair.
+**Gardé :** les 10 stories pour commencer. On aime bien que le message d'erreur ne dise pas si c'est le nom ou le mot de passe qui est faux. On garde aussi son idée de ne jamais enregistrer le mot de passe tel quel.
 
-**Modifié / rejeté :** rien pour l'instant. Le prof veut 5 à 8 stories, donc on savait qu'il faudrait en regrouper après. Elle a ajouté d'elle-même une confirmation avant de supprimer une tâche : on ne l'avait pas demandée, mais on la garde.
+**Modifié / rejeté :** rien pour l'instant. Il en faut 8 maximum, donc on en regroupera après. Elle a ajouté une confirmation avant de supprimer, on la garde.
 
-**Pourquoi :** on a demandé 10 stories exprès, pour faire le tri nous-mêmes au lieu de tout prendre.
+**Pourquoi :** on en a demandé 10 exprès, pour faire le tri nous-mêmes.
 
 ## Prompt 3 · Hypothèses et auto-critique (Claude)
 
@@ -133,15 +133,15 @@ Ce qu'une connexion côté navigateur protège vraiment
 - En résumé, c'est un contrôle d'accès « d'interface », pas une vraie sécurité. Pour protéger réellement les données sans serveur, il faudrait chiffrer les tâches avec une clé dérivée du mot de passe (PBKDF2 + AES-GCM, toujours via Web Crypto). C'est faisable, mais probablement hors de portée pour 3 séances. Le dire clairement à l'oral sera plus valorisé que de faire semblant que c'est sécurisé.
 ```
 
-**Gardé :** la plupart de ce qu'elle avait supposé (confirmation avant de supprimer, 3 niveaux de priorité, date pas obligatoire, recherche sur le titre, catégorie obligatoire). On garde aussi ses remarques sur les stories trop grosses, et l'idée d'écrire une seule fois la règle « tout reste enregistré après rechargement » au lieu de la répéter partout. Toute sa partie sur ce que la connexion protège ou pas ira dans le README. Et on retient le risque qu'un titre de tâche piégé exécute du code : il faudra afficher les textes de façon sûre.
+**Gardé :** la plupart de ses idées, et ses remarques sur les stories trop grosses. On garde aussi ce qu'elle dit sur ce que la connexion protège ou pas, pour le README. Et on retient qu'un titre de tâche piégé pourrait lancer du code, donc il faudra afficher les textes de façon sûre.
 
-**Modifié :** deux points n'étaient pas clairs, donc on les a fixés nous-mêmes : la jauge (2 règles ou moins = faible, 3 = moyen, 4 = fort) et le blocage, qui concerne un compte et pas tout le navigateur. On ajoute aussi un « sel » au mot de passe, parce qu'elle dit elle-même que sans ça il se retrouve vite.
+**Modifié :** on a fixé nous-mêmes ce qui n'était pas clair : les niveaux de la jauge, et le blocage qui ne vise qu'un compte. On ajoute aussi un « sel » : un petit bout de texte au hasard, différent pour chaque compte, mélangé au mot de passe avant de le protéger. Comme ça, deux personnes avec le même mot de passe n'enregistrent pas la même chose, et c'est plus dur à retrouver.
 
-**Rejeté :** chiffrer toutes les tâches. C'est trop compliqué pour nous en 3 séances, on en parlera à l'oral comme d'une limite.
+**Rejeté :** chiffrer toutes les tâches, trop compliqué pour nous. On en parlera à l'oral.
 
-**À vérifier :** elle dit que la partie sécurité ne marche pas si on ouvre le fichier index.html directement. On ne l'a pas encore testé, on le fera en séance 2. De toute façon, on lance l'app avec Live Server.
+**À vérifier :** elle dit que l'app ne marche pas si on ouvre le fichier directement. On le testera, mais de toute façon on utilise Live Server.
 
-**Pourquoi :** lui demander de se critiquer nous a montré tout ce qu'elle avait décidé sans nous demander. Sans ça, on aurait eu une jauge et un blocage mal définis.
+**Pourquoi :** en lui demandant de se critiquer, on a vu tout ce qu'elle avait décidé toute seule.
 
 ## Prompt 4 · Version finale des user stories (Claude)
 
@@ -192,13 +192,13 @@ Une story est terminée uniquement si :
 ```
 ````
 
-**Gardé :** les 8 stories et la règle commune, qu'on a mises dans le README. Toutes nos décisions du prompt 3 y sont.
+**Gardé :** les 8 stories, qu'on a mises dans le README.
 
-**Modifié :** rien. On ne lui avait pas dit comment classer les stories par priorité, mais son choix nous va : l'essentiel en premier, puis ce que demande la consigne, puis les bonus.
+**Modifié :** rien. Son classement par priorité nous va.
 
-**Remarqué :** on lui avait dit de ne rien ajouter, et elle a quand même ajouté deux petits détails (stories 7 et 8). On les garde parce qu'ils vont avec nos choix, mais ça montre qu'il faut tout relire.
+**Remarqué :** on lui avait dit de ne rien ajouter, et elle a quand même ajouté deux petits détails. On les garde, mais ça montre qu'il faut tout relire.
 
-**Pourquoi :** on lui a donné nos décisions une par une, pour que la version finale vienne de nous et pas juste d'elle.
+**Pourquoi :** on lui a donné nos choix un par un, pour que la version finale vienne de nous.
 
 ## Prompt 5 · Structure de fichiers (Claude)
 
@@ -242,13 +242,13 @@ taskflow/
 - PROMPTS.md : journal des prompts utilisés avec l'IA et de ce que vous en avez gardé ou corrigé.
 ```
 
-**Gardé :** la structure avec 2 fichiers en plus : un pour tout ce qui est enregistrement des données (storage.js) et un pour tout ce qui est sécurité (auth.js). On garde aussi l'ordre dans lequel les charger.
+**Gardé :** 2 fichiers en plus, un pour l'enregistrement et un pour la sécurité.
 
-**Modifié :** rien. On a juste choisi de faire une seule page, où la connexion, l'inscription et les tâches s'affichent l'une après l'autre, au lieu de plusieurs pages.
+**Modifié :** rien. On a juste choisi une seule page, où les écrans s'affichent l'un après l'autre.
 
-**Rejeté :** rien, elle n'a rien proposé d'inutile.
+**Rejeté :** rien.
 
-**Pourquoi :** en séparant les données et la sécurité, le code sera plus clair et plus facile à vérifier pendant l'audit. Une seule page évite de répéter le même code partout.
+**Pourquoi :** chaque partie a son fichier, c'est plus clair et plus facile à vérifier.
 
 ## Prompt 6 · Modèle de données (Claude)
 
@@ -354,15 +354,13 @@ Deux points à garder en tête :
 - Il vous reste à décider si « Quentin » et « quentin » sont le même compte. Si oui, mettez l'identifiant en minuscules avant de le stocker et de le comparer.
 ````
 
-**Gardé :** les deux modèles (tâche et utilisateur) et la façon de ranger les données. On aime bien l'idée de ranger les tâches de chaque utilisateur à part, au lieu d'écrire le propriétaire dans chaque tâche.
+**Gardé :** les deux modèles. On aime bien que chaque compte ait ses tâches rangées à part.
 
-**Modifié :** l'identifiant est mis en minuscules, donc « Quentin » et « quentin » c'est le même compte. Dans le README, on a remplacé « quentin » par « etudiant1 », parce que le prof ne veut pas de vraies données personnelles.
+**Modifié :** « Quentin » et « quentin », c'est le même compte. Et dans le README, on a mis « etudiant1 » au lieu de mon prénom.
 
-**Rejeté :** rien.
+**Remarqué :** l'app retient juste le nom de la personne connectée, donc on peut le changer pour se faire passer pour quelqu'un d'autre. On le garde pour l'audit.
 
-**Remarqué :** l'app retient juste le nom de la personne connectée, donc quelqu'un qui s'y connaît peut le changer et se connecter à la place d'un autre. On garde ça pour l'audit du prompt 7.
-
-**Pourquoi :** on n'enregistre que ce qui est vraiment nécessaire. Le reste (couleurs, ordre des priorités, jauge) se calcule à l'affichage, comme ça rien ne peut se contredire.
+**Pourquoi :** on enregistre seulement ce qui est utile, le reste est calculé à l'affichage.
 
 ## Prompt 7 · Critique du modèle de données (Claude)
 
@@ -428,15 +426,15 @@ Cas limites à prévoir
 Tout ce qui est marqué « Non » a la même cause : l'utilisateur contrôle entièrement son navigateur. Ce sont ces lignes qui doivent aller dans la partie « limites de sécurité » du README et de l'oral.
 ```
 
-**Gardé :** tout ce qu'elle a marqué « Oui » et qui touche à la sécurité ou au fait que l'app ne plante pas. On le fera en séance 2 : ne pas planter si les données sont abîmées, vérifier les valeurs, nettoyer l'identifiant, afficher les textes de façon sûre, refuser les champs vides, et afficher le même message d'erreur que le compte existe ou pas. Tout ce qu'elle a marqué « Non » va dans les limites de sécurité du README.
+**Gardé :** toutes les corrections qu'on peut faire nous-mêmes, à coder en séance 2 : ne pas planter si les données sont abîmées, refuser les champs vides, afficher les textes de façon sûre, et le même message d'erreur dans tous les cas. Ce qu'on ne peut pas corriger va dans les limites du README.
 
-**Modifié :** on change la méthode pour protéger le mot de passe, pour une méthode plus lente à casser (PBKDF2). Ce n'est pas beaucoup plus dur à faire et c'est bien plus sûr. On a aussi tranché les points qu'elle nous laissait : les dates passées sont acceptées, un caractère spécial c'est tout ce qui n'est ni une lettre ni un chiffre, et un titre fait 100 caractères maximum.
+**Modifié :** on protège le mot de passe avec une méthode plus lente à casser. On a aussi tranché les petits points qu'elle nous laissait (dates passées acceptées, titre de 100 caractères maximum…).
 
-**Reporté :** certains cas rares (plusieurs onglets ouverts, mémoire pleine, déconnexion automatique, suppression de compte…). Ce sont de vrais problèmes, mais trop poussés pour 3 séances, donc on les met dans les limites.
+**Reporté :** quelques cas rares, trop poussés pour 3 séances. On les met dans les limites.
 
-**À vérifier :** elle répète que la sécurité ne marche pas si on ouvre index.html directement. Toujours pas testé, on reste avec Live Server.
+**À vérifier :** elle répète sa remarque sur l'ouverture directe du fichier. Toujours à tester.
 
-**Pourquoi :** lui faire jouer le rôle d'un autre groupe qui nous audite a trouvé des failles qu'on n'aurait pas vues seuls. Et séparer ce qu'on peut corriger de ce qui demanderait un serveur nous donne la liste de travail pour la séance 2 et la partie limites pour l'oral.
+**Pourquoi :** lui faire jouer un autre groupe qui nous audite a trouvé des failles qu'on n'aurait pas vues.
 
 ## Prompt 8 · Rédaction du README (Claude)
 
@@ -669,25 +667,25 @@ Dans une vraie application, un serveur stockerait les comptes et les tâches, v�
 L'IA a été utilisée pour préparer le projet (user stories, structure, modèle de données, audit). Les prompts utilisés et ce que nous avons gardé ou corrigé sont détaillés dans [PROMPTS.md](PROMPTS.md).
 ````
 
-**Gardé :** toute la structure et presque tout le contenu. La partie limites reprend bien l'audit du prompt 7.
+**Gardé :** presque tout.
 
 **Modifié :**
-- on a mis nos noms ;
-- elle avait oublié qu'on veut que l'app ne plante pas si les données sont abîmées, on l'a rajouté ;
-- elle affirmait que l'app ne marche pas en ouvrant index.html directement, alors qu'on ne l'a pas vérifié : on a juste écrit qu'on lance toujours l'app avec Live Server ;
-- elle a mis à jour certaines stories avec nos dernières décisions. On garde, mais elles ne sont plus exactement celles du prompt 4.
+- nos noms ;
+- une de nos décisions qu'elle avait oubliée (ne pas planter si les données sont abîmées) ;
+- une phrase qu'on n'avait pas vérifiée, qu'on a reformulée ;
+- elle a mis à jour certaines stories avec nos derniers choix, on garde.
 
-**Pourquoi :** on lui a redonné nos dernières décisions, parce qu'après une longue conversation elle risquait de reprendre une vieille version. Et on ne voulait rien laisser dans le README qu'on n'a pas vérifié.
+**Pourquoi :** on lui a rappelé nos derniers choix, pour qu'elle ne reprenne pas une vieille version.
 
 ## Bilan de la séance 1
 
-- **Ce qui a bien marché :** les questions au début, et surtout quand on lui a demandé de se critiquer et de nous auditer. C'est là qu'elle a trouvé des failles qu'on n'aurait pas vues seuls.
-- **Ce qu'on a dû corriger :** elle a ajouté des choses alors qu'on lui avait dit de ne rien ajouter, elle a oublié une de nos décisions dans le README, et elle a répété plusieurs fois une affirmation qu'on n'a pas encore pu vérifier.
-- **Pour la séance 2 :** donner le README à l'IA de code, coder une story à la fois, et relire tout ce qu'elle génère avant de le garder.
+- **Ce qui a marché :** les questions au début, et surtout quand on lui a demandé de se critiquer. C'est là qu'elle a trouvé le plus de problèmes.
+- **Ce qu'on a corrigé :** elle ajoutait des choses sans qu'on demande, elle a oublié une de nos décisions, et elle a affirmé un truc qu'on n'avait pas vérifié.
+- **Pour la séance 2 :** donner le README à l'IA, coder petit à petit, et tout relire.
 
 # Séance 2 · Coder l'application
 
-Pour cette séance, on a utilisé Claude Code (le mode agent : il crée et modifie les fichiers lui-même), dans une seule conversation. On lui donne une seule tâche à la fois, et on relit et teste tout avant de faire le commit nous-mêmes.
+Pour coder, on a utilisé Claude Code, qui écrit directement dans nos fichiers. On lui donnait une seule chose à faire à la fois, puis on relisait, on testait, et on faisait le commit nous-mêmes.
 
 ## Prompt 9 · Sprint 1, étape 1 : ajouter et afficher une tâche (Claude Code)
 
@@ -750,15 +748,15 @@ Non vérifié : rendu visuel, la capture d’écran a échoué.
 Non fait : couleur des catégories, car hors de cette étape et CSS minimum demandé. Le critère de la story 1 l’exige, donc à prévoir avant de la déclarer finie.
 ```
 
-Fichiers créés : index.html, style.css, app.js (le code est dans le commit du sprint 1).
+Fichiers : index.html, style.css, app.js.
 
-**Gardé :** tout le code. Il respecte nos règles : les textes sont affichés de façon sûre, une date vide devient null, et chaque tâche suit le modèle du README. On a bien aimé qu'il vérifie la limite de 100 caractères deux fois, dans la page et dans le code, parce que la limite de la page peut être retirée dans les outils développeur. Il a aussi testé tout seul un titre piégé avec du code, et rien ne s'exécute.
+**Gardé :** tout. Il respecte nos règles, et il a même testé tout seul un titre piégé : rien ne se lance.
 
-**Modifié :** la priorité « moyenne » est mise par défaut, parce qu'après un ajout le formulaire revenait sur « basse ».
+**Modifié :** la priorité « moyenne » par défaut.
 
-**Remarqué :** il n'a pas pu tester l'affichage lui-même, donc on a fait les 3 tests à la main avec Live Server. Il nous a aussi prévenus qu'il manquait encore la couleur des catégories : on la fait au sprint 2, avec le CSS.
+**Remarqué :** il ne voyait pas l'écran, donc on a refait les tests à la main. Il manquait les couleurs des catégories, on les a faites au sprint 2.
 
-**Pourquoi :** on a mis toutes nos règles dans le premier prompt pour ne pas avoir à les répéter, et on lui a demandé une seule étape à la fois pour pouvoir tout relire et tout comprendre.
+**Pourquoi :** on a donné toutes nos règles dès le début, et une seule étape à la fois, pour pouvoir tout relire.
 
 ## Prompt 10 · Sprint 1, étape 2 : terminer, modifier et supprimer une tâche (Claude Code)
 
@@ -809,15 +807,15 @@ Tests par script en localhost réussis : les cas ci-dessus, 101 caractères refu
 Non testé : un vrai clic dans la fenêtre confirm(), simulée par script. Couleur des catégories toujours absente (critère de la story 1).
 ```
 
-Fichiers modifiés : index.html, style.css, app.js (le code est dans le commit du sprint 1).
+Fichiers : index.html, style.css, app.js.
 
-**Gardé :** tout. Il n'y a plus qu'une seule fonction pour vérifier le titre, et chaque tâche est retrouvée par son id. Quand on modifie une tâche, elle garde son id et reste cochée si elle l'était.
+**Gardé :** tout. Il y a une seule vérification du titre, pour l'ajout et pour la modification.
 
-**Remarqué :** on lui avait dit de ne rien faire de plus, et il a ajouté trois petites choses, mais il nous a prévenus et elles étaient nécessaires : le titre du formulaire qui change en mode modification, le formulaire qui se remet à zéro si on supprime la tâche en train d'être modifiée, et une règle CSS sans laquelle le bouton « Annuler » restait toujours visible. On les garde.
+**Remarqué :** il a ajouté trois petites choses sans qu'on demande, mais elles étaient utiles et il nous a prévenus.
 
-**Vérifié nous-mêmes :** il avait seulement simulé la fenêtre de confirmation, donc on a testé le vrai clic sur Annuler : la tâche reste bien.
+**Vérifié :** on a testé nous-mêmes la fenêtre de confirmation.
 
-**Pourquoi :** on lui a demandé exprès une seule fonction de validation et de passer par l'id, pour éviter les répétitions et les bugs quand l'ordre de la liste change, plus tard avec le tri.
+**Pourquoi :** on voulait éviter de répéter le même code, et des bugs plus tard avec le tri.
 
 ## Prompt 11 · Simplification du code (Claude Code)
 
@@ -853,13 +851,13 @@ Tests par script en localhost réussis : ajout, coche et décoche, pré-rempliss
 Non testé : la navigation au clavier après une coche, déduite du fonctionnement de la reconstruction.
 ```
 
-Fichier modifié : app.js.
+Fichier : app.js.
 
-**Gardé :** les deux simplifications. Maintenant, chaque champ de la tâche est écrit un par un, et cocher une tâche marche comme les autres boutons : on change la tâche, puis on réaffiche la liste.
+**Gardé :** les deux simplifications.
 
-**Remarqué :** il nous a prévenus que la case perd le focus quand on navigue au clavier. On accepte : c'est un petit défaut, et le code est bien plus simple.
+**Remarqué :** un petit défaut au clavier, on accepte.
 
-**Pourquoi :** en relisant le code, deux endroits étaient plus compliqués que nécessaire. On a fait simplifier parce qu'on veut pouvoir expliquer chaque ligne à l'oral.
+**Pourquoi :** deux endroits étaient trop compliqués. On veut pouvoir expliquer chaque ligne à l'oral.
 
 ## Prompt 12 · Sprint 2 : sauvegarde et mise en forme (Claude Code)
 
@@ -923,15 +921,15 @@ Une seule tâche invalide vide toute la liste, comme demandé, et la sauvegarde 
 localStorage plein non géré (point reporté du README) : l’erreur part en console, l’affichage reste correct, mais la tâche n’est pas sauvegardée.
 ```
 
-Fichiers : storage.js créé ; index.html, app.js et style.css modifiés (le code est dans le commit du sprint 2).
+Fichiers : storage.js (nouveau), index.html, app.js, style.css.
 
-**Gardé :** tout. Les tâches restent après un rechargement, et seul storage.js touche aux données enregistrées. Le nom « invite » n'est écrit qu'à un endroit, donc on pourra brancher les comptes facilement au sprint 3. Le CSS est plus simple qu'avant, et chaque catégorie a sa couleur.
+**Gardé :** tout. Les tâches restent quand on recharge la page, et chaque catégorie a sa couleur.
 
-**Remarqué :** il a ajouté de lui-même une vérification de chaque tâche relue. On ne l'avait pas demandée ici, mais c'était une des corrections décidées lors de notre audit, donc on la garde.
+**Remarqué :** il a ajouté une vérification des données relues. C'était prévu dans notre audit, on garde.
 
-**Vérifié nous-mêmes :** on a rechargé la page après plusieurs actions, testé sur un écran de téléphone, et abîmé les données à la main dans les outils développeur : l'app ne plante pas.
+**Vérifié :** on a rechargé la page, testé sur téléphone, et abîmé les données à la main : rien ne plante.
 
-**Pourquoi :** on a préparé la sauvegarde pour les comptes dès maintenant, pour ne pas devoir tout réécrire au sprint 3.
+**Pourquoi :** on a tout préparé pour ajouter les comptes après, sans tout réécrire.
 
 ## Prompt 13 · Ne plus perdre toutes les tâches (Claude Code)
 
@@ -966,9 +964,9 @@ Tests par script en localhost réussis sur 10 cas : clé absente, JSON cassé, n
 Risque : les tâches ignorées restent dans le localStorage jusqu’à la prochaine sauvegarde. Après un ajout, une coche, une modification ou une suppression, elles sont effacées définitivement.
 ```
 
-**Gardé :** la correction. Maintenant, une seule tâche abîmée ne fait plus disparaître toutes les autres.
+**Gardé :** la correction.
 
-**Pourquoi :** il nous avait prévenus lui-même du risque. Avec l'ancienne version, une seule tâche abîmée vidait la liste, et la sauvegarde suivante effaçait tout pour de bon. C'est justement ce que notre audit voulait éviter.
+**Pourquoi :** avant, une seule tâche abîmée faisait disparaître toutes les autres. Il nous avait prévenus.
 
 ## Prompt 14 · Sprint 3, étape 1 : création de compte (Claude Code)
 
@@ -1059,15 +1057,15 @@ L’absence de crypto.subtle est simulée par script, pas testée sur une vraie 
 Un compte invalide est ignoré à la lecture, puis effacé à la prochaine création de compte.
 ```
 
-Fichiers : auth.js créé ; storage.js, index.html et style.css modifiés.
+Fichiers : auth.js (nouveau), storage.js, index.html, style.css.
 
-**Gardé :** tout. Le mot de passe n'est jamais enregistré, seulement son empreinte et le sel. On a vérifié dans les outils développeur : on ne voit aucune trace du mot de passe. Il a choisi 600 000 répétitions du calcul parce que c'est la valeur recommandée aujourd'hui, et ça ne prend que 0,1 seconde. On garde aussi ses explications sur le sel et PBKDF2 pour préparer l'oral.
+**Gardé :** tout. Le mot de passe n'est jamais enregistré tel quel, on a vérifié. On garde ses explications pour l'oral.
 
-**Remarqué :** il a fait deux choix qu'on n'avait pas précisés. L'identifiant n'accepte pas les accents, pour éviter deux comptes qui se ressemblent à l'œil avec des lettres d'un autre alphabet. Et le bouton se bloque pendant le calcul, pour qu'un double clic ne crée pas deux comptes. On garde les deux. On a juste ajouté « sans accent » dans le README.
+**Remarqué :** deux choix à lui : pas d'accents dans le nom d'utilisateur, et le bouton bloqué pendant le calcul pour éviter un double clic. On garde.
 
-**Vérifié nous-mêmes :** deux comptes avec le même mot de passe ont bien deux empreintes différentes, ce qui prouve que le sel marche. Et lui a recalculé l'empreinte avec un autre outil (Python) : même résultat.
+**Vérifié :** deux comptes avec le même mot de passe n'enregistrent pas la même chose.
 
-**Pourquoi :** on a mis le hachage dès la création de compte, et pas plus tard, pour qu'aucun mot de passe ne soit jamais enregistré en clair, même pendant qu'on développe. On lui a aussi demandé d'expliquer comme à un débutant, parce que c'est la partie qu'on devra le mieux expliquer à l'oral.
+**Pourquoi :** on a protégé le mot de passe dès le début, pour qu'il ne soit jamais enregistré en clair.
 
 ## Prompt 15 · Sprint 3, étape 2 : connexion et tâches par compte (Claude Code)
 
@@ -1158,15 +1156,15 @@ Temps de réponse : un compte inconnu répond sans calcul, un mot de passe faux 
 Faux crypto.subtle : absence toujours simulée par script.
 ```
 
-Fichiers modifiés : index.html, auth.js, app.js, storage.js, style.css.
+Fichiers : index.html, auth.js, app.js, storage.js, style.css.
 
-**Gardé :** tout. Il y a maintenant trois écrans (connexion, inscription, tâches) et un seul s'affiche à la fois. Chaque compte a ses propres tâches, et on reste connecté après un rechargement. Quand on se déconnecte, plus rien ne reste à l'écran ni en mémoire. On garde aussi son explication de qui appelle quoi entre les fichiers, pour l'oral.
+**Gardé :** tout. Il y a trois écrans, chaque compte a ses tâches, et on reste connecté.
 
-**Remarqué :** il a vu lui-même qu'un mauvais mot de passe met un peu plus de temps à répondre qu'un compte qui n'existe pas, ce qui pourrait permettre de deviner quels comptes existent. On ne corrige pas, parce que la liste des comptes est de toute façon visible dans le navigateur, mais on en parlera à l'oral. Il nous a aussi prévenus que nos anciennes tâches de test étaient restées enregistrées : on les a supprimées.
+**Remarqué :** un mauvais mot de passe répond un peu plus lentement qu'un compte qui n'existe pas, ce qui pourrait montrer qu'un compte existe.
 
-**Vérifié nous-mêmes :** avec deux comptes, chacun ne voit que ses tâches. Le message d'erreur est le même pour un mauvais identifiant et pour un mauvais mot de passe. Et en changeant à la main le nom de la personne connectée dans le navigateur, on arrive sur les tâches de l'autre : c'est la limite « session falsifiable » qu'on avait prévue dans le README.
+**Vérifié :** chacun ne voit que ses tâches. Et en changeant à la main le nom enregistré, on arrive chez l'autre : c'est une limite prévue.
 
-**Pourquoi :** on avait préparé la sauvegarde au sprint 2 pour qu'elle marche avec un identifiant, donc brancher les comptes n'a rien cassé.
+**Pourquoi :** comme on avait tout préparé avant, ajouter les comptes n'a rien cassé.
 
 ## Prompt 16 · Sprint 3, étape 3 : blocage après 3 échecs (Claude Code)
 
@@ -1230,15 +1228,15 @@ Blocage contournable en modifiant le localStorage ou l’heure du PC : déjà in
 Plusieurs onglets : des essais simultanés peuvent perdre un échec (point reporté du README).
 ```
 
-Fichiers modifiés : auth.js, storage.js.
+Fichiers : auth.js, storage.js.
 
-**Gardé :** tout. Après 3 mauvais mots de passe, le compte est bloqué 30 secondes, même si on recharge la page, et les autres comptes peuvent toujours se connecter. Pendant le blocage, le mot de passe n'est même pas vérifié. Une connexion réussie remet le compteur à zéro. Le nombre d'échecs et la durée sont écrits une seule fois en haut du fichier, donc faciles à changer.
+**Gardé :** tout. Après 3 erreurs, le compte est bloqué 30 secondes, même si on recharge la page, et les autres comptes marchent toujours.
 
-**Remarqué :** il a ajouté deux petits détails : le message de blocage s'affiche dès le 3e échec, et « seconde » passe au singulier quand il ne reste qu'une seconde. On garde. Il nous a aussi prévenus d'une nouvelle limite : comme un compte qui n'existe pas n'est jamais bloqué, le message de blocage révèle que le compte existe. On l'a ajoutée dans les limites du README.
+**Remarqué :** le message de blocage montre que le compte existe. On l'a ajouté aux limites.
 
-**Vérifié nous-mêmes :** les 3 tests à la main, et le test d'audit : en remettant à zéro la date de blocage dans les outils développeur, le blocage saute. C'est la limite « blocage contournable » prévue dans le README.
+**Vérifié :** on peut retirer le blocage à la main dans le navigateur, c'est une limite prévue.
 
-**Pourquoi :** c'était un bonus, mais il protège contre quelqu'un qui essaie de deviner un mot de passe à la main. On l'a gardé simple, sans compte à rebours qui se met à jour tout seul.
+**Pourquoi :** ça empêche de deviner un mot de passe en essayant à la main.
 
 ## Prompt 17 · Tri, filtres et recherche (Claude Code)
 
@@ -1299,13 +1297,13 @@ Cocher une tâche avec le filtre « À faire » la fait disparaître aussitôt d
 La recherche ignore les majuscules mais pas les accents : reviser ne trouve pas Réviser.
 ```
 
-Fichiers modifiés : index.html, app.js.
+Fichiers : index.html, app.js.
 
-**Gardé :** tout. On peut trier, filtrer par statut et par catégorie, et chercher dans les titres, et tout se combine. Le tri et les filtres changent seulement ce qu'on voit : l'ordre des tâches enregistrées ne bouge pas, il l'a vérifié.
+**Gardé :** tout. On peut trier, filtrer et chercher, et tout marche ensemble, sans changer l'ordre des tâches enregistrées.
 
-**Remarqué :** il nous a signalé deux petites choses. Un nouveau compte sans tâche affiche « Aucune tâche ne correspond. », et la recherche ne gère pas les accents. On garde comme ça, parce que le README demandait seulement d'ignorer les majuscules.
+**Remarqué :** la recherche ne gère pas les accents. Pas grave.
 
-**Pourquoi :** c'était la fonctionnalité de la filière Développement, qu'on avait décidé de faire en plus. On l'a gardée pour la fin, une fois toute la partie sécurité terminée.
+**Pourquoi :** c'était en plus, donc on l'a fait à la fin, une fois la sécurité finie.
 
 ## Prompt 18 · Mise à jour du README (Claude Code)
 
@@ -1340,8 +1338,15 @@ Les deux nouvelles limites sont dans « Points reportés », car elles ne demand
 Écart restant, non corrigé : la ligne 154 indique pour echecs « 0 à 3, remis à 0 après une connexion réussie ». Dans le code, la valeur enregistrée va de 0 à 2, car echecs revient à 0 dès le 3e échec. Tu n’avais pas listé ce point.
 ```
 
-**Gardé :** toutes ses modifications. Il a bien changé seulement ce qu'on demandait.
+**Gardé :** tout.
 
-**Modifié par nous :** il a remarqué que le README disait que le compteur d'échecs allait jusqu'à 3, alors que dans le code il revient à 0 dès le 3e échec. On a corrigé cette ligne nous-mêmes. On a aussi mis à jour deux endroits qu'on avait oubliés : le README parlait encore de « deux écrans » au lieu de trois, et la partie sur l'IA ne parlait que de la séance 1.
+**Modifié par nous :** une erreur qu'il avait repérée sur le compteur d'échecs, et deux oublis (le nombre d'écrans et la partie sur l'IA).
 
-**Pourquoi :** le README va servir de base pour l'audit de la séance 3, donc il doit dire exactement ce que fait le code.
+**Pourquoi :** pour l'audit, le README doit dire exactement ce que fait l'app.
+
+## Bilan de la séance 2
+
+- **Ce qui a marché :** avancer étape par étape. Il testait tout seul et nous prévenait de ses ajouts et de ses limites.
+- **Ce qu'on a corrigé :** la priorité par défaut, deux bouts de code trop compliqués, et un problème qui pouvait effacer toutes les tâches.
+- **Ce qu'on retient :** il va vite, mais c'est à nous de relire et de tester.
+- **Pour la séance 3 :** relire tout le code ensemble pour pouvoir l'expliquer, et préparer la démo des limites.
