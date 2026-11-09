@@ -1,10 +1,8 @@
 // Seul fichier qui lit et écrit dans le localStorage
 
-// Identifiant temporaire : à remplacer par l'utilisateur connecté au sprint 3
-const IDENTIFIANT_ACTUEL = "invite";
-
-function cleTaches() {
-  return "taskflow_taches_" + IDENTIFIANT_ACTUEL;
+// Chaque compte a sa propre clé pour ses tâches
+function cleTaches(identifiant) {
+  return "taskflow_taches_" + identifiant;
 }
 
 // Vérifie qu'un élément relu respecte le modèle de tâche du README
@@ -21,9 +19,9 @@ function tacheValide(tache) {
 }
 
 // Renvoie les tâches enregistrées, ou [] si la clé est absente ou les données cassées
-function chargerTaches() {
+function chargerTaches(identifiant) {
   try {
-    const donnees = JSON.parse(localStorage.getItem(cleTaches()));
+    const donnees = JSON.parse(localStorage.getItem(cleTaches(identifiant)));
     if (Array.isArray(donnees)) {
       // On garde les tâches valides et on ignore les autres
       return donnees.filter(tacheValide);
@@ -35,6 +33,56 @@ function chargerTaches() {
 }
 
 // Limite connue (README) : si le localStorage est plein, setItem lève une erreur
-function sauvegarderTaches(taches) {
-  localStorage.setItem(cleTaches(), JSON.stringify(taches));
+function sauvegarderTaches(identifiant, taches) {
+  localStorage.setItem(cleTaches(identifiant), JSON.stringify(taches));
+}
+
+const CLE_UTILISATEURS = "taskflow_utilisateurs";
+
+// Vérifie qu'un élément relu respecte le modèle d'utilisateur du README
+function utilisateurValide(utilisateur) {
+  return utilisateur !== null
+    && typeof utilisateur === "object"
+    && typeof utilisateur.identifiant === "string"
+    && typeof utilisateur.sel === "string"
+    && typeof utilisateur.hash === "string"
+    && typeof utilisateur.echecs === "number"
+    && (utilisateur.bloqueJusqua === null || typeof utilisateur.bloqueJusqua === "number");
+}
+
+// Renvoie les comptes valides, ou [] si la clé est absente ou les données cassées
+function chargerUtilisateurs() {
+  try {
+    const donnees = JSON.parse(localStorage.getItem(CLE_UTILISATEURS));
+    if (Array.isArray(donnees)) {
+      return donnees.filter(utilisateurValide);
+    }
+    return [];
+  } catch (erreur) {
+    return [];
+  }
+}
+
+function sauvegarderUtilisateurs(utilisateurs) {
+  localStorage.setItem(CLE_UTILISATEURS, JSON.stringify(utilisateurs));
+}
+
+const CLE_SESSION = "taskflow_session";
+
+// Renvoie l'identifiant connecté, ou null si la session est absente ou cassée
+function lireSession() {
+  try {
+    const identifiant = JSON.parse(localStorage.getItem(CLE_SESSION));
+    return typeof identifiant === "string" ? identifiant : null;
+  } catch (erreur) {
+    return null;
+  }
+}
+
+function enregistrerSession(identifiant) {
+  localStorage.setItem(CLE_SESSION, JSON.stringify(identifiant));
+}
+
+function supprimerSession() {
+  localStorage.removeItem(CLE_SESSION);
 }

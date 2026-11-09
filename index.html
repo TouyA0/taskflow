@@ -9,42 +9,85 @@
 <body>
   <h1>TaskFlow</h1>
 
-  <h2 id="titre-formulaire">Ajouter une tâche</h2>
-  <form id="formulaire-tache">
-    <label for="titre">Titre</label>
-    <input type="text" id="titre" maxlength="100">
+  <!-- Les trois écrans sont cachés au départ : auth.js affiche le bon -->
+  <section id="ecran-connexion" hidden>
+    <h2>Connexion</h2>
+    <form id="formulaire-connexion">
+      <label for="identifiant-connexion">Identifiant</label>
+      <input type="text" id="identifiant-connexion" autocomplete="username">
 
-    <label for="description">Description (facultative)</label>
-    <textarea id="description" rows="3"></textarea>
+      <label for="mot-de-passe-connexion">Mot de passe</label>
+      <input type="password" id="mot-de-passe-connexion" autocomplete="current-password">
 
-    <label for="priorite">Priorité</label>
-    <select id="priorite">
-      <option value="basse">Basse</option>
-      <option value="moyenne" selected>Moyenne</option>
-      <option value="haute">Haute</option>
-    </select>
+      <p id="message-connexion" role="alert"></p>
 
-    <label for="categorie">Catégorie</label>
-    <select id="categorie">
-      <option value="cours">Cours</option>
-      <option value="perso">Perso</option>
-      <option value="projet">Projet</option>
-    </select>
+      <button type="submit" id="bouton-connexion">Se connecter</button>
+    </form>
+    <p><a href="#" id="lien-vers-inscription">Créer un compte</a></p>
+  </section>
 
-    <label for="echeance">Échéance (facultative)</label>
-    <input type="date" id="echeance">
+  <section id="ecran-inscription" hidden>
+    <h2>Créer un compte</h2>
+    <form id="formulaire-inscription">
+      <label for="identifiant">Identifiant</label>
+      <input type="text" id="identifiant" autocomplete="username">
 
-    <!-- Le message d'erreur est écrit ici par app.js -->
-    <p id="message-erreur" role="alert"></p>
+      <label for="mot-de-passe">Mot de passe</label>
+      <input type="password" id="mot-de-passe" autocomplete="new-password">
 
-    <button type="submit" id="bouton-valider">Ajouter</button>
-    <button type="button" id="bouton-annuler" hidden>Annuler</button>
-  </form>
+      <!-- La jauge et les règles manquantes sont écrites ici par auth.js -->
+      <p id="jauge"></p>
+      <p id="regles-manquantes"></p>
 
-  <h2>Mes tâches</h2>
-  <ul id="liste-taches"></ul>
+      <p id="message-inscription" role="alert"></p>
+
+      <button type="submit" id="bouton-inscription">Créer le compte</button>
+    </form>
+    <p><a href="#" id="lien-vers-connexion">J'ai déjà un compte</a></p>
+  </section>
+
+  <section id="ecran-taches" hidden>
+    <p id="utilisateur-connecte"></p>
+    <button type="button" id="bouton-deconnexion">Se déconnecter</button>
+
+    <h2 id="titre-formulaire">Ajouter une tâche</h2>
+    <form id="formulaire-tache">
+      <label for="titre">Titre</label>
+      <input type="text" id="titre" maxlength="100">
+
+      <label for="description">Description (facultative)</label>
+      <textarea id="description" rows="3"></textarea>
+
+      <label for="priorite">Priorité</label>
+      <select id="priorite">
+        <option value="basse">Basse</option>
+        <option value="moyenne" selected>Moyenne</option>
+        <option value="haute">Haute</option>
+      </select>
+
+      <label for="categorie">Catégorie</label>
+      <select id="categorie">
+        <option value="cours">Cours</option>
+        <option value="perso">Perso</option>
+        <option value="projet">Projet</option>
+      </select>
+
+      <label for="echeance">Échéance (facultative)</label>
+      <input type="date" id="echeance">
+
+      <!-- Le message d'erreur est écrit ici par app.js -->
+      <p id="message-erreur" role="alert"></p>
+
+      <button type="submit" id="bouton-valider">Ajouter</button>
+      <button type="button" id="bouton-annuler" hidden>Annuler</button>
+    </form>
+
+    <h2>Mes tâches</h2>
+    <ul id="liste-taches"></ul>
+  </section>
 
   <script src="storage.js"></script>
+  <script src="auth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

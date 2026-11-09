@@ -26,9 +26,42 @@ button {
   padding: 8px;
 }
 
-#message-erreur {
+#message-erreur,
+#message-inscription,
+#message-connexion {
   margin: 0;
   color: #b00020;
+}
+
+#message-connexion.succes {
+  color: #15803d;
+}
+
+#regles-manquantes {
+  margin: 0;
+}
+
+#jauge {
+  margin: 0;
+  padding: 2px 0;
+  color: white;
+  text-align: center;
+}
+
+/* Une largeur et une couleur pour chaque niveau de la jauge */
+.jauge-faible {
+  width: 33%;
+  background: #b00020;
+}
+
+.jauge-moyen {
+  width: 66%;
+  background: #b45309;
+}
+
+.jauge-fort {
+  width: 100%;
+  background: #15803d;
 }
 
 ul {

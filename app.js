@@ -1,5 +1,8 @@
-// Au démarrage, on reprend les tâches enregistrées
-let taches = chargerTaches();
+// Les tâches du compte connecté : vide tant que personne n'est connecté
+let taches = [];
+
+// Identifiant du compte connecté, null si personne n'est connecté
+let identifiantConnecte = null;
 
 const TITRE_MAX = 100;
 
@@ -18,6 +21,7 @@ const listeTaches = document.getElementById("liste-taches");
 const titreFormulaire = document.getElementById("titre-formulaire");
 const boutonValider = document.getElementById("bouton-valider");
 const boutonAnnuler = document.getElementById("bouton-annuler");
+const utilisateurConnecte = document.getElementById("utilisateur-connecte");
 
 // Donne un id basé sur l'heure, en évitant un id déjà pris
 function genererId() {
@@ -67,6 +71,24 @@ function reinitialiserFormulaire() {
   boutonAnnuler.hidden = true;
 }
 
+// Appelée par auth.js à la connexion : charge et affiche les tâches du compte
+function ouvrirTaches(identifiant) {
+  identifiantConnecte = identifiant;
+  taches = chargerTaches(identifiant);
+  utilisateurConnecte.textContent = "Connecté en tant que " + identifiant;
+  reinitialiserFormulaire();
+  afficherTaches();
+}
+
+// Appelée par auth.js à la déconnexion : plus rien ne reste en mémoire ni à l'écran
+function fermerTaches() {
+  identifiantConnecte = null;
+  taches = [];
+  utilisateurConnecte.textContent = "";
+  reinitialiserFormulaire();
+  afficherTaches();
+}
+
 // Pré-remplit le formulaire avec la tâche à modifier
 function commencerModification(id) {
   const tache = trouverTache(id);
@@ -88,7 +110,7 @@ function commencerModification(id) {
 function changerStatut(id, estTerminee) {
   trouverTache(id).statut = estTerminee ? "terminee" : "a_faire";
   afficherTaches();
-  sauvegarderTaches(taches);
+  sauvegarderTaches(identifiantConnecte, taches);
 }
 
 function supprimerTache(id) {
@@ -103,7 +125,7 @@ function supprimerTache(id) {
     reinitialiserFormulaire();
   }
   afficherTaches();
-  sauvegarderTaches(taches);
+  sauvegarderTaches(identifiantConnecte, taches);
 }
 
 // Transforme "2026-11-15" en "15/11/2026"
@@ -211,10 +233,10 @@ formulaire.addEventListener("submit", function (evenement) {
 
   reinitialiserFormulaire();
   afficherTaches();
-  sauvegarderTaches(taches);
+  sauvegarderTaches(identifiantConnecte, taches);
 });
 
 boutonAnnuler.addEventListener("click", reinitialiserFormulaire);
 
-// Affiche les tâches chargées au démarrage
-afficherTaches();
+// Tous les scripts sont chargés : auth.js peut choisir l'écran de départ
+demarrer();

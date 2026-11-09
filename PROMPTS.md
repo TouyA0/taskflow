@@ -969,3 +969,201 @@ Risque : les tâches ignorées restent dans le localStorage jusqu’à la procha
 **Gardé :** la correction. Maintenant, une seule tâche abîmée ne fait plus disparaître toutes les autres.
 
 **Pourquoi :** il nous avait prévenus lui-même du risque. Avec l'ancienne version, une seule tâche abîmée vidait la liste, et la sauvegarde suivante effaçait tout pour de bon. C'est justement ce que notre audit voulait éviter.
+
+## Prompt 14 · Sprint 3, étape 1 : création de compte (Claude Code)
+
+**Prompt :**
+```
+Sprint 3, étape 1 : création de compte. On garde les mêmes règles que depuis le début (JS natif, textContent, code simple et commenté, pas de commit, fichiers modifiés + explication + 3 cas de test à la fin).
+
+1. Crée auth.js, qui contient toute la partie sécurité, et charge-le entre storage.js et app.js dans index.html.
+
+2. Ajoute dans index.html un formulaire d'inscription : identifiant, mot de passe, et la jauge en dessous. Pour l'instant, affiche-le simplement au-dessus des tâches : le changement d'écran (inscription, connexion, tâches) viendra à l'étape suivante.
+
+3. Le contrôle du mot de passe, à chaque caractère tapé :
+   - les 4 règles : 8 caractères minimum, une majuscule, un chiffre, un caractère spécial (tout ce qui n'est ni une lettre ni un chiffre) ;
+   - la jauge : 2 règles ou moins = faible, 3 = moyen, 4 = fort, avec une couleur pour chaque niveau ;
+   - les règles qui manquent sont affichées sous la jauge ;
+   - seul « fort » permet de créer le compte.
+
+4. L'identifiant est mis en minuscules et sans espaces autour, et il ne peut contenir que des lettres, des chiffres, - et _. Un identifiant vide ou déjà pris est refusé.
+
+5. Le mot de passe n'est jamais enregistré en clair. Hache-le avec PBKDF2 (SHA-256) via Web Crypto, avec un sel aléatoire de 16 octets tiré avec crypto.getRandomValues, différent pour chaque compte. Le sel et le hash sont enregistrés en texte hexadécimal. Passe le mot de passe par TextEncoder avant de le hacher. Choisis un nombre d'itérations raisonnable et explique ton choix en une phrase. Si crypto.subtle n'existe pas (page ouverte sans localhost), affiche un message clair au lieu de planter.
+
+6. Les comptes sont enregistrés dans storage.js, sous la clé taskflow_utilisateurs, avec le modèle du README (identifiant, sel, hash, echecs: 0, bloqueJusqua: null). La lecture se fait dans un try/catch, comme pour les tâches.
+
+Une fois le compte créé, affiche juste « Compte créé ». Pas encore de connexion.
+
+Dans ton explication finale, explique comme à un débutant ce que font le sel, PBKDF2 et les fonctions async/await, parce qu'on devra le présenter à l'oral.
+```
+
+**Résultat :**
+```
+Je crée auth.js, j’ajoute le formulaire et la jauge, puis le stockage des comptes. Ensuite je teste en localhost, en recalculant le hash avec un autre outil que Web Crypto.
+
+La création de compte fonctionne et affiche « Compte créé ». Aucun commit.
+
+Fichiers
+Créé : auth.js
+Modifiés : storage.js, index.html, style.css
+Ce que j’ai fait
+Formulaire : identifiant, mot de passe, jauge et règles manquantes, au-dessus des tâches.
+Jauge : recalculée à chaque caractère. Rouge pour faible, orange pour moyen, vert pour fort. Seul « fort » permet de créer le compte.
+Caractère spécial : é compte comme une lettre, donc pas comme un caractère spécial, conformément au README.
+Identifiant : trim(), minuscules, puis contrôle. Vide, caractère interdit ou déjà pris : refusé.
+Stockage : chargerUtilisateurs() et sauvegarderUtilisateurs() dans storage.js, avec try/catch et filtre des comptes invalides, comme pour les tâches.
+Sans crypto.subtle : message clair, pas de plantage.
+
+Itérations : 600 000, car c’est la valeur recommandée par l’OWASP pour PBKDF2-SHA256, et le calcul a pris environ 0,1 seconde ici, ce qui reste imperceptible pour l’utilisateur.
+
+Deux choix que tu n’avais pas précisés :
+
+L’identifiant n’accepte que a-z sans accent. Ça évite les comptes visuellement identiques, comme un а cyrillique à la place d’un a latin.
+Le bouton est désactivé pendant le calcul, sinon un double clic créerait deux comptes.
+À expliquer à l’oral
+
+Le hash. C’est une empreinte : à partir du mot de passe, on calcule un long texte, et on ne peut pas faire le chemin inverse. À la connexion, on recalculera l’empreinte du mot de passe tapé et on la comparera à celle enregistrée. Le mot de passe lui-même n’est jamais stocké.
+
+Le sel. C’est une valeur aléatoire de 16 octets, différente pour chaque compte, mélangée au mot de passe avant le calcul.
+
+Sans sel, deux personnes avec le même mot de passe auraient la même empreinte. Un attaquant le verrait tout de suite.
+Sans sel, il pourrait aussi utiliser des tables d’empreintes calculées à l’avance.
+Avec un sel, il doit attaquer chaque compte séparément.
+Le sel n’est pas secret : il est enregistré à côté du hash, car il faut le réutiliser à la connexion.
+
+PBKDF2. Un hash simple comme SHA-256 est très rapide, donc un attaquant peut tester des milliards de mots de passe. PBKDF2 répète le calcul 600 000 fois. Pour un utilisateur, c’est 0,1 seconde une seule fois. Pour un attaquant, chaque essai coûte 600 000 fois plus cher. Ça ralentit l’attaque, mais ne l’empêche pas : un mot de passe très courant reste vite trouvé.
+
+TextEncoder. Web Crypto travaille sur des octets, pas sur du texte. TextEncoder convertit le mot de passe en octets UTF-8.
+
+async / await. Certaines opérations prennent du temps, comme ce calcul. Le navigateur ne bloque pas la page pendant ce temps : il donne une promesse, c’est-à-dire « le résultat arrivera plus tard ».
+
+await veut dire « attends ce résultat avant de passer à la ligne suivante », sans figer la page.
+async est le mot obligatoire devant une fonction qui utilise await.
+Comparaison : tu commandes au comptoir, tu attends ton numéro, et le restaurant continue à servir les autres.
+3 cas de test à la main
+
+Lancer avec Live Server.
+
+Jauge : taper abc, puis Abcdefg1, puis Abcdefg1!. Attendu : faible, puis moyen avec « Il manque : un caractère spécial », puis fort sans règle manquante.
+Création : identifiant  Etudiant1 , mot de passe Abcdefg1!, cliquer « Créer le compte ». Attendu : « Compte créé », formulaire vidé. Dans F12, Application, Local Storage, taskflow_utilisateurs contient etudiant1 avec sel et hash en hexadécimal, et aucune trace du mot de passe.
+Cas limite, identifiant déjà pris avec une autre casse : recréer ETUDIANT1 avec un mot de passe fort. Attendu : « Cet identifiant est déjà pris. », aucun nouveau compte.
+Vérifié
+
+Tests par script en localhost réussis : 13 mots de passe sur la jauge, dont accents et emojis, identifiants refusés, double clic, sels et hash différents pour le même mot de passe, localStorage plein, 7 cas de lecture cassée, tâches toujours fonctionnelles, aucune erreur console.
+
+Le hash a été recalculé en Python avec le même sel : résultat identique, donc PBKDF2 est bien appliqué avec les bons paramètres.
+
+Limites :
+
+L’absence de crypto.subtle est simulée par script, pas testée sur une vraie page non sécurisée.
+Un compte invalide est ignoré à la lecture, puis effacé à la prochaine création de compte.
+```
+
+Fichiers : auth.js créé ; storage.js, index.html et style.css modifiés.
+
+**Gardé :** tout. Le mot de passe n'est jamais enregistré, seulement son empreinte et le sel. On a vérifié dans les outils développeur : on ne voit aucune trace du mot de passe. Il a choisi 600 000 répétitions du calcul parce que c'est la valeur recommandée aujourd'hui, et ça ne prend que 0,1 seconde. On garde aussi ses explications sur le sel et PBKDF2 pour préparer l'oral.
+
+**Remarqué :** il a fait deux choix qu'on n'avait pas précisés. L'identifiant n'accepte pas les accents, pour éviter deux comptes qui se ressemblent à l'œil avec des lettres d'un autre alphabet. Et le bouton se bloque pendant le calcul, pour qu'un double clic ne crée pas deux comptes. On garde les deux. On a juste ajouté « sans accent » dans le README.
+
+**Vérifié nous-mêmes :** deux comptes avec le même mot de passe ont bien deux empreintes différentes, ce qui prouve que le sel marche. Et lui a recalculé l'empreinte avec un autre outil (Python) : même résultat.
+
+**Pourquoi :** on a mis le hachage dès la création de compte, et pas plus tard, pour qu'aucun mot de passe ne soit jamais enregistré en clair, même pendant qu'on développe. On lui a aussi demandé d'expliquer comme à un débutant, parce que c'est la partie qu'on devra le mieux expliquer à l'oral.
+
+## Prompt 15 · Sprint 3, étape 2 : connexion et tâches par compte (Claude Code)
+
+**Prompt :**
+```
+Sprint 3, étape 2 : connexion, déconnexion et tâches séparées par compte. Mêmes règles que d'habitude.
+
+1. Trois écrans dans index.html : connexion, inscription et tâches. Un seul est visible à la fois. On passe de la connexion à l'inscription avec un lien, et inversement. Après la création d'un compte, on revient à l'écran de connexion avec le message « Compte créé, tu peux te connecter ».
+
+2. Connexion : l'identifiant est normalisé comme à l'inscription, puis on recalcule l'empreinte du mot de passe tapé avec le sel du compte, et on la compare à celle enregistrée. Si l'identifiant n'existe pas ou si le mot de passe est faux, on affiche le même message : « Identifiant ou mot de passe incorrect. ». Ne compte pas encore les échecs, le blocage viendra à l'étape suivante.
+
+3. Session : l'identifiant connecté est enregistré dans storage.js sous la clé taskflow_session. À l'ouverture de la page, si une session existe et que le compte existe toujours, on arrive directement sur les tâches, sinon sur la connexion. Un bouton « Se déconnecter » supprime la session et ramène à la connexion. Affiche « Connecté en tant que … » sur l'écran des tâches.
+
+4. Tâches par compte : remplace l'identifiant temporaire "invite" par l'identifiant connecté, pour que chaque compte ait sa propre clé taskflow_taches_<identifiant>. Après une déconnexion, plus aucune tâche ne doit rester affichée ou en mémoire.
+
+Dans ton explication finale, explique simplement comment auth.js et app.js se parlent : qui appelle quoi, et dans quel ordre.
+```
+
+**Résultat :**
+```
+Je réécris index.html en trois écrans, je branche session et connexion, puis je teste deux comptes en localhost : séparation des tâches, déconnexion, rechargement.
+
+Connexion, déconnexion, session et tâches par compte fonctionnent. Aucun commit.
+
+Fichiers modifiés (dans taskflow/)
+index.html
+auth.js
+app.js
+storage.js
+style.css
+Ce que j’ai fait
+Écrans : trois <section>, toutes cachées au départ. afficherEcran() en montre une seule. Elle vide aussi les formulaires de connexion et d’inscription, donc aucun mot de passe ne reste dans un champ caché.
+Connexion : identifiant normalisé, sel relu et reconverti en octets, empreinte recalculée, puis comparaison. Compte inconnu ou mauvais mot de passe : même message.
+Session : lireSession(), enregistrerSession(), supprimerSession() dans storage.js, avec try/catch à la lecture.
+Tâches par compte : "invite" a disparu. chargerTaches() et sauvegarderTaches() reçoivent maintenant l’identifiant.
+Déconnexion : fermerTaches() vide le tableau, la liste et le formulaire de tâche, même si une modification était en cours.
+Comment auth.js et app.js se parlent
+
+Les scripts se chargent dans l’ordre storage.js, auth.js, app.js. Ils partagent le même espace global : une fonction écrite dans un fichier peut être appelée depuis un autre.
+
+Au chargement de la page
+
+storage.js puis auth.js se chargent : ils définissent leurs fonctions et leurs écouteurs.
+app.js se charge, et sa dernière ligne appelle demarrer(), qui est dans auth.js. C’est app.js qui lance cet appel, car à ce moment tout est prêt. Si auth.js le faisait lui-même, ouvrirTaches() n’existerait pas encore.
+demarrer() lit la session via storage.js. Si le compte existe : ouvrirSession(). Sinon : écran de connexion.
+
+À la connexion
+
+Le clic sur « Se connecter » déclenche le code de auth.js, qui vérifie le mot de passe.
+auth.js enregistre la session via storage.js.
+auth.js appelle ouvrirSession(), qui affiche l’écran des tâches puis appelle ouvrirTaches(identifiant) dans app.js.
+app.js retient l’identifiant, charge ses tâches via storage.js et les affiche.
+
+Pendant l’utilisation
+auth.js n’intervient plus. app.js sauvegarde avec l’identifiant qu’il a retenu.
+
+À la déconnexion
+
+auth.js supprime la session via storage.js.
+auth.js appelle fermerTaches() dans app.js, qui oublie l’identifiant et les tâches.
+auth.js affiche l’écran de connexion.
+
+À retenir : auth.js décide qui est connecté, app.js gère les tâches de cette personne, storage.js est le seul à toucher au localStorage. app.js n’appelle dans auth.js que demarrer(), et auth.js n’appelle dans app.js que ouvrirTaches() et fermerTaches().
+
+3 cas de test à la main
+
+Lancer avec Live Server.
+
+Deux comptes séparés : créer etudiant1, se connecter, ajouter une tâche, se déconnecter. Créer etudiant2, se connecter. Attendu : liste vide, « Connecté en tant que etudiant2 ». Se reconnecter en etudiant1 : sa tâche est là.
+Rester connecté : une fois connecté, recharger la page ou fermer puis rouvrir l’onglet. Attendu : écran des tâches directement. Cliquer « Se déconnecter », recharger : écran de connexion.
+Cas limite, session vers un compte inexistant : une fois connecté, dans F12, Application, Local Storage, remplacer la valeur de taskflow_session par "fantome", puis F5. Attendu : écran de connexion, aucune tâche affichée.
+Vérifié
+
+Tests par script en localhost réussis :
+
+changement d’écrans et liens ;
+mauvais mot de passe, compte inconnu, champs vides : même message ;
+connexion avec identifiant en majuscules et espaces ;
+déconnexion pendant une modification : mémoire et écran vidés ;
+clés séparées entre deux comptes ;
+rechargement, et 7 valeurs de session dont cassée et compte inexistant ;
+aucune erreur console.
+
+Limites :
+
+Ancienne clé : taskflow_taches_invite reste dans ton localStorage. Un compte nommé invite récupérerait ces tâches : supprime cette clé dans F12.
+Temps de réponse : un compte inconnu répond sans calcul, un mot de passe faux prend environ 0,1 seconde. La différence pourrait révéler qu’un compte existe, mais la liste des comptes est déjà lisible dans le localStorage (limite du README).
+Faux crypto.subtle : absence toujours simulée par script.
+```
+
+Fichiers modifiés : index.html, auth.js, app.js, storage.js, style.css.
+
+**Gardé :** tout. Il y a maintenant trois écrans (connexion, inscription, tâches) et un seul s'affiche à la fois. Chaque compte a ses propres tâches, et on reste connecté après un rechargement. Quand on se déconnecte, plus rien ne reste à l'écran ni en mémoire. On garde aussi son explication de qui appelle quoi entre les fichiers, pour l'oral.
+
+**Remarqué :** il a vu lui-même qu'un mauvais mot de passe met un peu plus de temps à répondre qu'un compte qui n'existe pas, ce qui pourrait permettre de deviner quels comptes existent. On ne corrige pas, parce que la liste des comptes est de toute façon visible dans le navigateur, mais on en parlera à l'oral. Il nous a aussi prévenus que nos anciennes tâches de test étaient restées enregistrées : on les a supprimées.
+
+**Vérifié nous-mêmes :** avec deux comptes, chacun ne voit que ses tâches. Le message d'erreur est le même pour un mauvais identifiant et pour un mauvais mot de passe. Et en changeant à la main le nom de la personne connectée dans le navigateur, on arrive sur les tâches de l'autre : c'est la limite « session falsifiable » qu'on avait prévue dans le README.
+
+**Pourquoi :** on avait préparé la sauvegarde au sprint 2 pour qu'elle marche avec un identifiant, donc brancher les comptes n'a rien cassé.
