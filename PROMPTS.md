@@ -1306,3 +1306,42 @@ Fichiers modifiés : index.html, app.js.
 **Remarqué :** il nous a signalé deux petites choses. Un nouveau compte sans tâche affiche « Aucune tâche ne correspond. », et la recherche ne gère pas les accents. On garde comme ça, parce que le README demandait seulement d'ignorer les majuscules.
 
 **Pourquoi :** c'était la fonctionnalité de la filière Développement, qu'on avait décidé de faire en plus. On l'a gardée pour la fin, une fois toute la partie sécurité terminée.
+
+## Prompt 18 · Mise à jour du README (Claude Code)
+
+**Prompt :**
+```
+Dernière chose : mets à jour README.md pour qu'il corresponde au code, sans rien changer d'autre.
+- L'identifiant n'accepte que des lettres sans accent.
+- Dans « Limites de sécurité connues », ajoute : le message de blocage révèle qu'un compte existe, et un mauvais mot de passe met plus de temps à répondre qu'un compte qui n'existe pas.
+- Dans « Clés localStorage », précise que les tâches ou comptes abîmés sont ignorés à la lecture.
+- Donne-moi la liste exacte des lignes modifiées.
+```
+
+**Résultat :**
+```
+Je modifie seulement les lignes concernées, puis je relève la liste exacte avec git diff.
+
+README.md est à jour. Aucun commit.
+
+Lignes modifiées (relevées avec git diff)
+Ligne	Section	Changement
+34	Cahier des charges, Sécurité	des lettres, devient des lettres sans accent,
+70	User stories, story 5	lettres, devient lettres sans accent,
+151	Modèle de données, Utilisateur, champ identifiant	lettres, devient lettres sans accent,
+168	Clés localStorage	Phrase ajoutée à la fin : « Les tâches ou comptes abîmés sont ignorés à la lecture, les autres sont gardés. »
+192	Limites de sécurité, Points reportés	Nouvelle ligne : Message de blocage
+193	Limites de sécurité, Points reportés	Nouvelle ligne : Temps de réponse
+
+Total : 4 lignes modifiées, 2 ajoutées.
+
+Les deux nouvelles limites sont dans « Points reportés », car elles ne demanderaient pas forcément un serveur.
+
+Écart restant, non corrigé : la ligne 154 indique pour echecs « 0 à 3, remis à 0 après une connexion réussie ». Dans le code, la valeur enregistrée va de 0 à 2, car echecs revient à 0 dès le 3e échec. Tu n’avais pas listé ce point.
+```
+
+**Gardé :** toutes ses modifications. Il a bien changé seulement ce qu'on demandait.
+
+**Modifié par nous :** il a remarqué que le README disait que le compteur d'échecs allait jusqu'à 3, alors que dans le code il revient à 0 dès le 3e échec. On a corrigé cette ligne nous-mêmes. On a aussi mis à jour deux endroits qu'on avait oubliés : le README parlait encore de « deux écrans » au lieu de trois, et la partie sur l'IA ne parlait que de la séance 1.
+
+**Pourquoi :** le README va servir de base pour l'audit de la séance 3, donc il doit dire exactement ce que fait le code.
