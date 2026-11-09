@@ -1167,3 +1167,75 @@ Fichiers modifiés : index.html, auth.js, app.js, storage.js, style.css.
 **Vérifié nous-mêmes :** avec deux comptes, chacun ne voit que ses tâches. Le message d'erreur est le même pour un mauvais identifiant et pour un mauvais mot de passe. Et en changeant à la main le nom de la personne connectée dans le navigateur, on arrive sur les tâches de l'autre : c'est la limite « session falsifiable » qu'on avait prévue dans le README.
 
 **Pourquoi :** on avait préparé la sauvegarde au sprint 2 pour qu'elle marche avec un identifiant, donc brancher les comptes n'a rien cassé.
+
+## Prompt 16 · Sprint 3, étape 3 : blocage après 3 échecs (Claude Code)
+
+**Prompt :**
+```
+Sprint 3, étape 3 (bonus) : blocage après 3 échecs. Mêmes règles que d'habitude.
+
+- Quand le mot de passe est faux pour un compte qui existe, on augmente son compteur echecs et on l'enregistre.
+- Au 3e échec, on enregistre bloqueJusqua = maintenant + 30 secondes, et on remet echecs à 0.
+- Tant que le compte est bloqué, on ne vérifie même pas le mot de passe : on affiche « Compte bloqué, réessaie dans X secondes », avec X calculé au moment de l'essai. Pas de compte à rebours qui se met à jour tout seul, on reste simple.
+- Une fois les 30 secondes passées, on peut réessayer normalement.
+- Une connexion réussie remet echecs à 0 et bloqueJusqua à null.
+- Pour un identifiant qui n'existe pas, on ne compte rien et on garde le message habituel.
+- Le blocage reste actif après un rechargement de la page, puisqu'il est enregistré dans le compte.
+- Le blocage ne concerne que ce compte : les autres comptes peuvent toujours se connecter.
+```
+
+**Résultat :**
+```
+J’ajoute le compteur d’échecs et le blocage dans auth.js, plus une fonction de mise à jour d’un compte dans storage.js. Je teste avec une vraie attente de 30 secondes.
+
+Le blocage après 3 échecs fonctionne. Aucun commit.
+
+Fichiers modifiés
+auth.js
+storage.js
+Ce que j’ai fait
+Ordre des contrôles à la connexion : compte inconnu, puis compte bloqué, puis vérification du mot de passe.
+Compte inconnu : message habituel, rien n’est compté ni enregistré.
+Compte bloqué : secondesDeBlocage() calcule X au moment de l’essai, à partir de bloqueJusqua et Date.now(). Le mot de passe n’est pas calculé.
+Mot de passe faux : enregistrerEchec() ajoute 1. Au 3e, bloqueJusqua = Date.now() + 30000 et echecs revient à 0.
+Connexion réussie : effacerEchecs() remet echecs à 0 et bloqueJusqua à null.
+Enregistrement : mettreAJourUtilisateur() dans storage.js remplace uniquement le compte concerné. Le blocage est stocké dans ce compte : il survit au rechargement et ne touche pas les autres.
+
+Deux détails que tu n’avais pas précisés :
+
+Le 3e échec affiche déjà « Compte bloqué, réessaie dans 30 secondes », comme le demande la story 8.
+Le texte passe au singulier pour X = 1 : « 1 seconde ».
+3 cas de test à la main
+
+Lancer avec Live Server, avec deux comptes créés : etudiant1 et etudiant2.
+
+Blocage : se tromper 3 fois de mot de passe sur etudiant1. Attendu : 2 fois « Identifiant ou mot de passe incorrect. », puis « Compte bloqué, réessaie dans 30 secondes ». Taper le bon mot de passe : toujours bloqué.
+Rechargement et autre compte : pendant le blocage, appuyer sur F5 et réessayer etudiant1. Attendu : toujours bloqué, X a diminué. Se connecter en etudiant2 : ça marche.
+Cas limite, compteur remis à zéro : se tromper 2 fois sur un compte, se connecter correctement, se déconnecter, puis se tromper 2 fois de plus. Attendu : pas de blocage, car la connexion réussie a remis le compteur à 0.
+Vérifié
+
+Tests par script en localhost réussis, dont une vraie attente de 30 secondes :
+
+compteur à 1, 2, puis blocage ;
+aucun calcul de hash pendant le blocage, vérifié en comptant les appels à deriveBits ;
+blocage après rechargement, X à 10 secondes après 20 secondes d’attente ;
+après expiration : mauvais mot de passe recompté à 1, bon mot de passe accepté avec remise à zéro ;
+identifiant inconnu essayé 4 fois : aucune donnée modifiée ;
+autre compte non touché, sel et hash intacts, aucune erreur console.
+
+Limites :
+
+Le message de blocage révèle qu’un compte existe, puisqu’un identifiant inconnu n’est jamais bloqué. C’est une conséquence directe des règles demandées, à mentionner à l’oral.
+Blocage contournable en modifiant le localStorage ou l’heure du PC : déjà indiqué dans le README.
+Plusieurs onglets : des essais simultanés peuvent perdre un échec (point reporté du README).
+```
+
+Fichiers modifiés : auth.js, storage.js.
+
+**Gardé :** tout. Après 3 mauvais mots de passe, le compte est bloqué 30 secondes, même si on recharge la page, et les autres comptes peuvent toujours se connecter. Pendant le blocage, le mot de passe n'est même pas vérifié. Une connexion réussie remet le compteur à zéro. Le nombre d'échecs et la durée sont écrits une seule fois en haut du fichier, donc faciles à changer.
+
+**Remarqué :** il a ajouté deux petits détails : le message de blocage s'affiche dès le 3e échec, et « seconde » passe au singulier quand il ne reste qu'une seconde. On garde. Il nous a aussi prévenus d'une nouvelle limite : comme un compte qui n'existe pas n'est jamais bloqué, le message de blocage révèle que le compte existe. On l'a ajoutée dans les limites du README.
+
+**Vérifié nous-mêmes :** les 3 tests à la main, et le test d'audit : en remettant à zéro la date de blocage dans les outils développeur, le blocage saute. C'est la limite « blocage contournable » prévue dans le README.
+
+**Pourquoi :** c'était un bonus, mais il protège contre quelqu'un qui essaie de deviner un mot de passe à la main. On l'a gardé simple, sans compte à rebours qui se met à jour tout seul.

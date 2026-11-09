@@ -5,6 +5,12 @@ const ITERATIONS_PBKDF2 = 600000;
 
 const MESSAGE_SANS_CRYPTO = "Action impossible : ouvre l'application en localhost avec Live Server.";
 
+// Même message dans les deux cas : on ne révèle pas si le compte existe
+const MESSAGE_CONNEXION_INCORRECTE = "Identifiant ou mot de passe incorrect.";
+
+const ECHECS_MAX = 3;
+const DUREE_BLOCAGE_MS = 30000;
+
 // Les éléments de la page dont on a besoin
 const formulaireInscription = document.getElementById("formulaire-inscription");
 const champIdentifiant = document.getElementById("identifiant");
@@ -162,6 +168,37 @@ async function motDePasseCorrect(utilisateur, motDePasse) {
   return hash === utilisateur.hash;
 }
 
+// Renvoie le nombre de secondes de blocage restantes, 0 si le compte n'est pas bloqué
+function secondesDeBlocage(utilisateur) {
+  if (utilisateur.bloqueJusqua === null) {
+    return 0;
+  }
+  // Math.ceil arrondit au-dessus : jamais « 0 seconde » tant que c'est bloqué
+  return Math.max(0, Math.ceil((utilisateur.bloqueJusqua - Date.now()) / 1000));
+}
+
+function messageDeBlocage(secondes) {
+  return "Compte bloqué, réessaie dans " + secondes + (secondes > 1 ? " secondes" : " seconde");
+}
+
+// Compte un échec et bloque le compte au 3e
+function enregistrerEchec(utilisateur) {
+  utilisateur.echecs = utilisateur.echecs + 1;
+
+  if (utilisateur.echecs >= ECHECS_MAX) {
+    utilisateur.bloqueJusqua = Date.now() + DUREE_BLOCAGE_MS;
+    utilisateur.echecs = 0;
+  }
+  mettreAJourUtilisateur(utilisateur);
+}
+
+// Après une connexion réussie, le compte repart de zéro
+function effacerEchecs(utilisateur) {
+  utilisateur.echecs = 0;
+  utilisateur.bloqueJusqua = null;
+  mettreAJourUtilisateur(utilisateur);
+}
+
 function afficherMessage(element, texte, estUnSucces) {
   element.textContent = texte;
   element.classList.toggle("succes", estUnSucces);
@@ -233,12 +270,31 @@ formulaireConnexion.addEventListener("submit", async function (evenement) {
   try {
     const utilisateur = trouverUtilisateur(identifiant);
 
-    if (utilisateur !== undefined && await motDePasseCorrect(utilisateur, motDePasse)) {
+    // Compte inconnu : on ne compte rien
+    if (utilisateur === undefined) {
+      afficherMessage(messageConnexion, MESSAGE_CONNEXION_INCORRECTE, false);
+      return;
+    }
+
+    // Compte bloqué : on ne vérifie même pas le mot de passe
+    if (secondesDeBlocage(utilisateur) > 0) {
+      afficherMessage(messageConnexion, messageDeBlocage(secondesDeBlocage(utilisateur)), false);
+      return;
+    }
+
+    if (await motDePasseCorrect(utilisateur, motDePasse)) {
+      effacerEchecs(utilisateur);
       enregistrerSession(identifiant);
       ouvrirSession(identifiant);
+      return;
+    }
+
+    enregistrerEchec(utilisateur);
+    // Si cet échec vient de bloquer le compte, on le dit tout de suite
+    if (secondesDeBlocage(utilisateur) > 0) {
+      afficherMessage(messageConnexion, messageDeBlocage(secondesDeBlocage(utilisateur)), false);
     } else {
-      // Même message dans les deux cas : on ne révèle pas si le compte existe
-      afficherMessage(messageConnexion, "Identifiant ou mot de passe incorrect.", false);
+      afficherMessage(messageConnexion, MESSAGE_CONNEXION_INCORRECTE, false);
     }
   } catch (erreurConnexion) {
     afficherMessage(messageConnexion, "La connexion a échoué.", false);

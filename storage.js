@@ -67,6 +67,14 @@ function sauvegarderUtilisateurs(utilisateurs) {
   localStorage.setItem(CLE_UTILISATEURS, JSON.stringify(utilisateurs));
 }
 
+// Remplace un compte enregistré par sa nouvelle version
+function mettreAJourUtilisateur(utilisateurModifie) {
+  const utilisateurs = chargerUtilisateurs().map(function (utilisateur) {
+    return utilisateur.identifiant === utilisateurModifie.identifiant ? utilisateurModifie : utilisateur;
+  });
+  sauvegarderUtilisateurs(utilisateurs);
+}
+
 const CLE_SESSION = "taskflow_session";
 
 // Renvoie l'identifiant connecté, ou null si la session est absente ou cassée
