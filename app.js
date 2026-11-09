@@ -6,6 +6,9 @@ let identifiantConnecte = null;
 
 const TITRE_MAX = 100;
 
+// Rang de chaque priorité pour le tri : le plus grand passe en premier
+const RANG_PRIORITE = { haute: 3, moyenne: 2, basse: 1 };
+
 // Id de la tâche en cours de modification, null si le formulaire sert à ajouter
 let idEnModification = null;
 
@@ -22,6 +25,12 @@ const titreFormulaire = document.getElementById("titre-formulaire");
 const boutonValider = document.getElementById("bouton-valider");
 const boutonAnnuler = document.getElementById("bouton-annuler");
 const utilisateurConnecte = document.getElementById("utilisateur-connecte");
+const formulaireFiltres = document.getElementById("formulaire-filtres");
+const champTri = document.getElementById("tri");
+const filtreStatut = document.getElementById("filtre-statut");
+const filtreCategorie = document.getElementById("filtre-categorie");
+const champRecherche = document.getElementById("recherche");
+const messageAucuneTache = document.getElementById("aucune-tache");
 
 // Donne un id basé sur l'heure, en évitant un id déjà pris
 function genererId() {
@@ -76,6 +85,8 @@ function ouvrirTaches(identifiant) {
   identifiantConnecte = identifiant;
   taches = chargerTaches(identifiant);
   utilisateurConnecte.textContent = "Connecté en tant que " + identifiant;
+  // Le tri et les filtres reviennent à zéro à chaque connexion
+  formulaireFiltres.reset();
   reinitialiserFormulaire();
   afficherTaches();
 }
@@ -148,11 +159,54 @@ function creerBouton(texte, action) {
   return bouton;
 }
 
+function comparerPriorite(tacheA, tacheB) {
+  return RANG_PRIORITE[tacheB.priorite] - RANG_PRIORITE[tacheA.priorite];
+}
+
+// Date la plus proche en premier, tâches sans échéance à la fin
+function comparerEcheance(tacheA, tacheB) {
+  if (tacheA.echeance === tacheB.echeance) {
+    return 0;
+  }
+  if (tacheA.echeance === null) {
+    return 1;
+  }
+  if (tacheB.echeance === null) {
+    return -1;
+  }
+  // Au format AAAA-MM-JJ, l'ordre du texte est aussi l'ordre des dates
+  return tacheA.echeance < tacheB.echeance ? -1 : 1;
+}
+
+// Renvoie les tâches à afficher, filtrées puis triées
+function tachesAAfficher() {
+  const statut = filtreStatut.value;
+  const categorie = filtreCategorie.value;
+  const recherche = champRecherche.value.trim().toLowerCase();
+
+  // filter crée un nouveau tableau : le tri ne réordonne jamais taches
+  const resultat = taches.filter(function (tache) {
+    return (statut === "toutes" || tache.statut === statut)
+      && (categorie === "toutes" || tache.categorie === categorie)
+      && tache.titre.toLowerCase().includes(recherche);
+  });
+
+  if (champTri.value === "priorite") {
+    resultat.sort(comparerPriorite);
+  } else if (champTri.value === "echeance") {
+    resultat.sort(comparerEcheance);
+  }
+  return resultat;
+}
+
 // Vide la liste affichée, puis la reconstruit à partir du tableau
 function afficherTaches() {
   listeTaches.textContent = "";
 
-  taches.forEach(function (tache) {
+  const tachesVisibles = tachesAAfficher();
+  messageAucuneTache.hidden = tachesVisibles.length !== 0;
+
+  tachesVisibles.forEach(function (tache) {
     const element = document.createElement("li");
     element.classList.toggle("terminee", tache.statut === "terminee");
     // La couleur de chaque catégorie est définie dans style.css
@@ -237,6 +291,14 @@ formulaire.addEventListener("submit", function (evenement) {
 });
 
 boutonAnnuler.addEventListener("click", reinitialiserFormulaire);
+
+// Un seul écouteur suffit : l'événement des 4 champs remonte jusqu'au formulaire
+formulaireFiltres.addEventListener("input", afficherTaches);
+
+// Entrée dans la recherche ne doit pas recharger la page
+formulaireFiltres.addEventListener("submit", function (evenement) {
+  evenement.preventDefault();
+});
 
 // Tous les scripts sont chargés : auth.js peut choisir l'écran de départ
 demarrer();

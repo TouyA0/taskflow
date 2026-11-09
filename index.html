@@ -83,7 +83,35 @@
     </form>
 
     <h2>Mes tâches</h2>
+    <form id="formulaire-filtres">
+      <label for="tri">Trier par</label>
+      <select id="tri">
+        <option value="aucun">Aucun</option>
+        <option value="priorite">Priorité</option>
+        <option value="echeance">Échéance</option>
+      </select>
+
+      <label for="filtre-statut">Statut</label>
+      <select id="filtre-statut">
+        <option value="toutes">Toutes</option>
+        <option value="a_faire">À faire</option>
+        <option value="terminee">Terminées</option>
+      </select>
+
+      <label for="filtre-categorie">Catégorie</label>
+      <select id="filtre-categorie">
+        <option value="toutes">Toutes</option>
+        <option value="cours">Cours</option>
+        <option value="perso">Perso</option>
+        <option value="projet">Projet</option>
+      </select>
+
+      <label for="recherche">Rechercher dans les titres</label>
+      <input type="search" id="recherche">
+    </form>
+
     <ul id="liste-taches"></ul>
+    <p id="aucune-tache" hidden>Aucune tâche ne correspond.</p>
   </section>
 
   <script src="storage.js"></script>

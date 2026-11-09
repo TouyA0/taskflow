@@ -1239,3 +1239,70 @@ Fichiers modifiés : auth.js, storage.js.
 **Vérifié nous-mêmes :** les 3 tests à la main, et le test d'audit : en remettant à zéro la date de blocage dans les outils développeur, le blocage saute. C'est la limite « blocage contournable » prévue dans le README.
 
 **Pourquoi :** c'était un bonus, mais il protège contre quelqu'un qui essaie de deviner un mot de passe à la main. On l'a gardé simple, sans compte à rebours qui se met à jour tout seul.
+
+## Prompt 17 · Tri, filtres et recherche (Claude Code)
+
+**Prompt :**
+```
+Dernière étape : tri, filtres et recherche. Mêmes règles que d'habitude. Ne touche pas à auth.js ni à storage.js.
+
+- Au-dessus de la liste des tâches, ajoute : un choix de tri (aucun, par priorité, par échéance), un filtre par statut (toutes, à faire, terminées), un filtre par catégorie (toutes, cours, perso, projet) et un champ de recherche.
+- Tri par priorité : haute, puis moyenne, puis basse. Tri par échéance : la date la plus proche en premier, les tâches sans échéance à la fin.
+- Les deux filtres et la recherche se combinent, et le tri s'applique à la liste filtrée.
+- La recherche porte seulement sur le titre et ignore les majuscules. Effacer la recherche réaffiche la liste filtrée.
+- Si aucune tâche ne correspond, affiche « Aucune tâche ne correspond. ».
+- Le tri et les filtres changent seulement ce qui est affiché : le tableau des tâches enregistrées ne doit pas être modifié ni réordonné. Ils ne sont pas sauvegardés et reviennent à zéro à la connexion.
+```
+
+**Résultat :**
+```
+J’ajoute les contrôles dans index.html et un calcul de la liste affichée dans app.js, sur une copie, donc sans toucher au tableau enregistré. Ensuite je teste les combinaisons en localhost.
+
+Tri, filtres et recherche fonctionnent et se combinent. auth.js et storage.js n’ont pas été touchés. Aucun commit.
+
+Fichiers modifiés
+index.html
+app.js
+Ce que j’ai fait
+Contrôles : un formulaire au-dessus de la liste, avec tri, statut, catégorie et recherche. Un seul écouteur input sur ce formulaire suffit pour les 4 champs.
+tachesAAfficher() : filter() garde les tâches qui passent les 3 conditions, puis le tri s’applique sur ce résultat.
+Tableau protégé : filter() crée toujours un nouveau tableau, donc sort() ne réordonne jamais taches. Le tri et les filtres ne sont pas sauvegardés.
+Priorité : RANG_PRIORITE, avec haute = 3, moyenne = 2, basse = 1, comme dans le README. À égalité, l’ordre d’origine est gardé.
+Échéance : les dates AAAA-MM-JJ se comparent comme du texte. Les null passent à la fin.
+Recherche : titre seulement, en minuscules des deux côtés, espaces autour ignorés.
+Retour à zéro : formulaireFiltres.reset() dans ouvrirTaches(), donc à chaque connexion et à chaque rechargement.
+Touche Entrée : bloquée dans la recherche, sinon elle rechargerait la page.
+3 cas de test à la main
+
+Lancer avec Live Server, créer 4 tâches variées (priorités, catégories, avec et sans échéance), en cocher une.
+
+Tri : choisir « Priorité » : haute, puis moyenne, puis basse. Choisir « Échéance » : date la plus proche en premier, tâches sans date à la fin. Revenir à « Aucun » : ordre de création.
+Combinaison : choisir « À faire », une catégorie et taper une partie d’un titre en MAJUSCULES. Attendu : seules les tâches qui respectent les 3 conditions restent. Effacer la recherche : la liste filtrée revient.
+Cas limite, aucun résultat et retour à zéro : chercher xyzxyz. Attendu : « Aucune tâche ne correspond. ». Se déconnecter puis se reconnecter : tri et filtres à zéro, toutes les tâches visibles.
+Vérifié
+
+Tests en localhost réussis :
+
+chaque tri, chaque filtre, recherche avec majuscules et espaces, description ignorée ;
+combinaisons des 2 filtres, de la recherche et du tri ;
+taches et localStorage inchangés après tri et filtres ;
+cocher, modifier, supprimer dans une liste triée : la bonne tâche est touchée ;
+retour à zéro à la connexion et au rechargement ;
+saisie clavier réelle, Entrée sans rechargement, effacement ;
+aucune erreur console.
+
+À savoir :
+
+Un compte sans aucune tâche affiche aussi « Aucune tâche ne correspond. », car la liste affichée est vide.
+Une date passée apparaît en premier dans le tri par échéance.
+Cocher une tâche avec le filtre « À faire » la fait disparaître aussitôt de la liste, ce qui est le comportement attendu du filtre.
+La recherche ignore les majuscules mais pas les accents : reviser ne trouve pas Réviser.
+```
+
+Fichiers modifiés : index.html, app.js.
+
+**Gardé :** tout. On peut trier, filtrer par statut et par catégorie, et chercher dans les titres, et tout se combine. Le tri et les filtres changent seulement ce qu'on voit : l'ordre des tâches enregistrées ne bouge pas, il l'a vérifié.
+
+**Remarqué :** il nous a signalé deux petites choses. Un nouveau compte sans tâche affiche « Aucune tâche ne correspond. », et la recherche ne gère pas les accents. On garde comme ça, parce que le README demandait seulement d'ignorer les majuscules.
+
+**Pourquoi :** c'était la fonctionnalité de la filière Développement, qu'on avait décidé de faire en plus. On l'a gardée pour la fin, une fois toute la partie sécurité terminée.
