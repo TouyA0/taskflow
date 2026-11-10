@@ -1,112 +1,438 @@
-body {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
-  font-family: sans-serif;
-  color: #222;
-  background: #f4f4f4;
+/* Toutes les couleurs sont ici : on les change à un seul endroit */
+:root {
+  --fond: #f1f5f9;
+  --surface: #ffffff;
+  --texte: #0f172a;
+  --texte-discret: #556070;
+  --bordure: #e2e8f0;
+  --principal: #4338ca;
+  --rouge: #b91c1c;
+  --orange: #c2410c;
+  --vert: #15803d;
+  --bleu: #2563eb;
+
+  /* Les trois couleurs des catégories */
+  --cours: var(--bleu);
+  --perso: var(--vert);
+  --projet: var(--orange);
 }
+
+/* Le padding et la bordure comptent dans la largeur : rien ne déborde */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--texte);
+  background: var(--fond);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--principal);
+}
+
+h2 {
+  margin: 24px 0 12px;
+  font-size: 1.2rem;
+}
+
+a {
+  color: var(--principal);
+}
+
+/* Contour bien visible quand on navigue au clavier */
+:focus-visible {
+  outline: 3px solid var(--principal);
+  outline-offset: 2px;
+}
+
+/* ---------- Barre du haut ---------- */
+
+.barre-haut {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bordure);
+}
+
+/* Sur téléphone : une deuxième ligne juste sous le nom */
+.barre-compte {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  /* Les marges négatives annulent le padding de l'écran : pleine largeur */
+  margin: 0 -16px 16px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bordure);
+}
+
+/* min-width: 0 autorise le texte à rétrécir, le bouton garde sa place */
+#utilisateur-connecte {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--texte-discret);
+}
+
+#bouton-deconnexion {
+  flex-shrink: 0;
+}
+
+/* ---------- Cartes et écrans ---------- */
+
+.carte {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: 10px;
+}
+
+.carte h2 {
+  margin-top: 0;
+}
+
+/* Connexion et inscription : carte centrée, avec une marge sur téléphone */
+.carte-centree {
+  width: calc(100% - 32px);
+  max-width: 400px;
+  margin: 32px auto;
+}
+
+.carte-centree > p {
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+#ecran-taches {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+}
+
+/* ---------- Formulaires ---------- */
 
 /* La grille met chaque élément du formulaire sur sa propre ligne, en pleine largeur */
 form {
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
 
 form label {
   margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-/* Taille de texte normale : évite le zoom automatique sur téléphone */
+/* Le 16px hérité évite le zoom automatique sur téléphone */
 input,
 textarea,
-select,
-button {
+select {
+  padding: 8px 10px;
   font: inherit;
-  padding: 8px;
+  color: var(--texte);
+  background: var(--surface);
+  border: 1px solid var(--texte-discret);
+  border-radius: 6px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--principal);
+}
+
+.actions-formulaire {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 #message-erreur,
 #message-inscription,
 #message-connexion {
   margin: 0;
-  color: #b00020;
+  color: var(--rouge);
 }
 
 #message-connexion.succes {
-  color: #15803d;
+  color: var(--vert);
 }
 
 #regles-manquantes {
   margin: 0;
+  font-size: 0.875rem;
+  color: var(--texte-discret);
 }
 
+/* ---------- Jauge du mot de passe ---------- */
+
+/* Deux colonnes : la barre (créée par ::before), puis le texte du niveau */
 #jauge {
-  margin: 0;
-  padding: 2px 0;
-  color: white;
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 3.5em;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
-/* Une largeur et une couleur pour chaque niveau de la jauge */
+/* Le dégradé à arrêt net dessine la partie remplie puis le reste de la barre */
+#jauge::before {
+  content: "";
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, currentColor var(--remplissage), var(--bordure) var(--remplissage));
+}
+
+/* auth.js met une de ces classes sur la jauge */
 .jauge-faible {
-  width: 33%;
-  background: #b00020;
+  --remplissage: 33%;
+  color: var(--rouge);
 }
 
 .jauge-moyen {
-  width: 66%;
-  background: #b45309;
+  --remplissage: 66%;
+  color: var(--orange);
 }
 
 .jauge-fort {
-  width: 100%;
-  background: #15803d;
+  --remplissage: 100%;
+  color: var(--vert);
 }
 
+/* ---------- Boutons ---------- */
+
+/* Le style secondaire est le style par défaut de tous les boutons */
+button {
+  min-height: 40px;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--texte);
+  background: var(--surface);
+  border: 1px solid var(--texte-discret);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--fond);
+}
+
+.bouton-principal {
+  color: white;
+  background: var(--principal);
+  border-color: var(--principal);
+}
+
+.bouton-danger {
+  color: white;
+  background: var(--rouge);
+  border-color: var(--rouge);
+}
+
+/* Au survol, les boutons colorés foncent : pas besoin d'une autre couleur */
+.bouton-principal:hover,
+.bouton-danger:hover {
+  filter: brightness(0.85);
+}
+
+.bouton-principal:hover {
+  background: var(--principal);
+}
+
+.bouton-danger:hover {
+  background: var(--rouge);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Liste des tâches ---------- */
+
 ul {
+  margin: 16px 0 0;
   padding: 0;
   list-style: none;
 }
 
-/* Une tâche : chaque titre ou paragraphe prend toute la largeur, les boutons restent côte à côte */
+#aucune-tache {
+  text-align: center;
+  color: var(--texte-discret);
+}
+
+/* Une tâche : le titre à gauche, la case à droite, le reste sur toute la largeur */
 li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 12px;
   margin-bottom: 12px;
-  padding: 12px;
-  background: white;
-  border: 1px solid #ccc;
-  border-left: 6px solid #ccc;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-left: 5px solid var(--couleur-categorie);
+  border-radius: 10px;
   /* Un long mot sans espace passe à la ligne au lieu de déborder */
   overflow-wrap: anywhere;
 }
 
-li strong,
-li p {
-  flex-basis: 100%;
+li > * {
+  grid-column: 1 / -1;
   margin: 0;
 }
 
-li strong {
-  font-size: 1.15em;
+li > strong {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 1.15rem;
 }
 
-/* Les couleurs des catégories : un seul endroit à changer */
+li > label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 0.875rem;
+  color: var(--texte-discret);
+  cursor: pointer;
+}
+
+.tache-infos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 0.875rem;
+  color: var(--texte-discret);
+}
+
+.tache-infos p {
+  margin: 0;
+}
+
+.tache-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- Étiquettes ---------- */
+
+.etiquette {
+  padding: 1px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+.priorite-haute {
+  color: var(--rouge);
+}
+
+.priorite-moyenne {
+  color: var(--orange);
+}
+
+.priorite-basse {
+  color: var(--texte-discret);
+}
+
+/* La carte choisit sa couleur : la bordure et l'étiquette la reprennent */
 .categorie-cours {
-  border-left-color: #2563eb;
+  --couleur-categorie: var(--cours);
 }
 
 .categorie-perso {
-  border-left-color: #15803d;
+  --couleur-categorie: var(--perso);
 }
 
 .categorie-projet {
-  border-left-color: #c2410c;
+  --couleur-categorie: var(--projet);
 }
 
-.terminee strong,
-.terminee p {
+.etiquette-categorie {
+  color: white;
+  background: var(--couleur-categorie);
+  border-color: var(--couleur-categorie);
+}
+
+/* ---------- Tâche terminée : barrée et plus pâle ---------- */
+
+/* Placé après les catégories pour remplacer leur couleur */
+.terminee {
+  --couleur-categorie: var(--bordure);
+  background: var(--fond);
+}
+
+.terminee > strong,
+.terminee > p {
+  color: var(--texte-discret);
   text-decoration: line-through;
+}
+
+.terminee .etiquette {
+  color: var(--texte-discret);
+  background: transparent;
+  border-color: currentColor;
+}
+
+/* ---------- Ordinateur ---------- */
+
+@media (min-width: 700px) {
+  #ecran-taches {
+    padding-top: 24px;
+  }
+
+  /* Le compte se place par-dessus la barre du haut, à droite du nom */
+  .barre-compte {
+    position: absolute;
+    top: 0;
+    left: 160px;
+    right: 16px;
+    height: 64px;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+
+  /* La barre a une hauteur fixe : un identifiant très long est coupé avec « … » */
+  #utilisateur-connecte {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* Remplissage par colonne : chaque libellé au-dessus de son champ, 4 colonnes */
+  #formulaire-filtres {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    column-gap: 12px;
+  }
+
+  #formulaire-filtres label {
+    margin-top: 0;
+  }
 }

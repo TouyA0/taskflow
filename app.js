@@ -232,21 +232,39 @@ function afficherTaches() {
       element.appendChild(creerParagraphe(tache.description));
     }
 
-    element.appendChild(creerParagraphe("Priorité : " + tache.priorite));
-    element.appendChild(creerParagraphe("Catégorie : " + tache.categorie));
+    // Les étiquettes et l'échéance sont regroupées sur une même ligne
+    const infos = document.createElement("div");
+    infos.classList.add("tache-infos");
+
+    const etiquettePriorite = creerParagraphe("Priorité : " + tache.priorite);
+    etiquettePriorite.classList.add("etiquette", "priorite-" + tache.priorite);
+    infos.appendChild(etiquettePriorite);
+
+    const etiquetteCategorie = creerParagraphe("Catégorie : " + tache.categorie);
+    etiquetteCategorie.classList.add("etiquette", "etiquette-categorie");
+    infos.appendChild(etiquetteCategorie);
 
     if (tache.echeance === null) {
-      element.appendChild(creerParagraphe("Échéance : aucune"));
+      infos.appendChild(creerParagraphe("Échéance : aucune"));
     } else {
-      element.appendChild(creerParagraphe("Échéance : " + formaterDate(tache.echeance)));
+      infos.appendChild(creerParagraphe("Échéance : " + formaterDate(tache.echeance)));
     }
+    element.appendChild(infos);
 
-    element.appendChild(creerBouton("Modifier", function () {
+    // Les boutons sont regroupés pour être alignés à droite
+    const actions = document.createElement("div");
+    actions.classList.add("tache-actions");
+
+    actions.appendChild(creerBouton("Modifier", function () {
       commencerModification(tache.id);
     }));
-    element.appendChild(creerBouton("Supprimer", function () {
+
+    const boutonSupprimer = creerBouton("Supprimer", function () {
       supprimerTache(tache.id);
-    }));
+    });
+    boutonSupprimer.classList.add("bouton-danger");
+    actions.appendChild(boutonSupprimer);
+    element.appendChild(actions);
 
     listeTaches.appendChild(element);
   });

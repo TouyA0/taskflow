@@ -7,10 +7,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>TaskFlow</h1>
+  <header class="barre-haut">
+    <h1>TaskFlow</h1>
+  </header>
 
   <!-- Les trois écrans sont cachés au départ : auth.js affiche le bon -->
-  <section id="ecran-connexion" hidden>
+  <section id="ecran-connexion" class="carte carte-centree" hidden>
     <h2>Connexion</h2>
     <form id="formulaire-connexion">
       <label for="identifiant-connexion">Identifiant</label>
@@ -21,12 +23,12 @@
 
       <p id="message-connexion" role="alert"></p>
 
-      <button type="submit" id="bouton-connexion">Se connecter</button>
+      <button type="submit" id="bouton-connexion" class="bouton-principal">Se connecter</button>
     </form>
     <p><a href="#" id="lien-vers-inscription">Créer un compte</a></p>
   </section>
 
-  <section id="ecran-inscription" hidden>
+  <section id="ecran-inscription" class="carte carte-centree" hidden>
     <h2>Créer un compte</h2>
     <form id="formulaire-inscription">
       <label for="identifiant">Identifiant</label>
@@ -41,49 +43,56 @@
 
       <p id="message-inscription" role="alert"></p>
 
-      <button type="submit" id="bouton-inscription">Créer le compte</button>
+      <button type="submit" id="bouton-inscription" class="bouton-principal">Créer le compte</button>
     </form>
     <p><a href="#" id="lien-vers-connexion">J'ai déjà un compte</a></p>
   </section>
 
   <section id="ecran-taches" hidden>
-    <p id="utilisateur-connecte"></p>
-    <button type="button" id="bouton-deconnexion">Se déconnecter</button>
+    <!-- Reste dans l'écran des tâches pour être caché avec lui ; style.css le place dans la barre -->
+    <div class="barre-compte">
+      <p id="utilisateur-connecte"></p>
+      <button type="button" id="bouton-deconnexion">Se déconnecter</button>
+    </div>
 
-    <h2 id="titre-formulaire">Ajouter une tâche</h2>
-    <form id="formulaire-tache">
-      <label for="titre">Titre</label>
-      <input type="text" id="titre" maxlength="100">
+    <div class="carte">
+      <h2 id="titre-formulaire">Ajouter une tâche</h2>
+      <form id="formulaire-tache">
+        <label for="titre">Titre</label>
+        <input type="text" id="titre" maxlength="100">
 
-      <label for="description">Description (facultative)</label>
-      <textarea id="description" rows="3"></textarea>
+        <label for="description">Description (facultative)</label>
+        <textarea id="description" rows="3"></textarea>
 
-      <label for="priorite">Priorité</label>
-      <select id="priorite">
-        <option value="basse">Basse</option>
-        <option value="moyenne" selected>Moyenne</option>
-        <option value="haute">Haute</option>
-      </select>
+        <label for="priorite">Priorité</label>
+        <select id="priorite">
+          <option value="basse">Basse</option>
+          <option value="moyenne" selected>Moyenne</option>
+          <option value="haute">Haute</option>
+        </select>
 
-      <label for="categorie">Catégorie</label>
-      <select id="categorie">
-        <option value="cours">Cours</option>
-        <option value="perso">Perso</option>
-        <option value="projet">Projet</option>
-      </select>
+        <label for="categorie">Catégorie</label>
+        <select id="categorie">
+          <option value="cours">Cours</option>
+          <option value="perso">Perso</option>
+          <option value="projet">Projet</option>
+        </select>
 
-      <label for="echeance">Échéance (facultative)</label>
-      <input type="date" id="echeance">
+        <label for="echeance">Échéance (facultative)</label>
+        <input type="date" id="echeance">
 
-      <!-- Le message d'erreur est écrit ici par app.js -->
-      <p id="message-erreur" role="alert"></p>
+        <!-- Le message d'erreur est écrit ici par app.js -->
+        <p id="message-erreur" role="alert"></p>
 
-      <button type="submit" id="bouton-valider">Ajouter</button>
-      <button type="button" id="bouton-annuler" hidden>Annuler</button>
-    </form>
+        <div class="actions-formulaire">
+          <button type="submit" id="bouton-valider" class="bouton-principal">Ajouter</button>
+          <button type="button" id="bouton-annuler" hidden>Annuler</button>
+        </div>
+      </form>
+    </div>
 
     <h2>Mes tâches</h2>
-    <form id="formulaire-filtres">
+    <form id="formulaire-filtres" class="carte">
       <label for="tri">Trier par</label>
       <select id="tri">
         <option value="aucun">Aucun</option>

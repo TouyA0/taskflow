@@ -1344,6 +1344,92 @@ Les deux nouvelles limites sont dans « Points reportés », car elles ne demand
 
 **Pourquoi :** pour l'audit, le README doit dire exactement ce que fait l'app.
 
+## Prompt 19 · Amélioration du design (Claude Code)
+
+**Prompt :**
+```
+Refais le design pour qu'il soit propre et moderne, sans rien changer au fonctionnement. Mêmes règles que d'habitude.
+
+Ce que je veux :
+- Une barre en haut avec le nom TaskFlow, et sur l'écran des tâches « Connecté en tant que … » et le bouton « Se déconnecter » à droite.
+- Les écrans de connexion et d'inscription dans une carte centrée, pas trop large.
+- Sur l'écran des tâches : le formulaire d'ajout dans une carte, les filtres sur une seule ligne sur ordinateur, puis la liste.
+- Chaque tâche dans une carte : le titre bien visible, la priorité et la catégorie sous forme de petites étiquettes de couleur, l'échéance plus discrète, et les boutons Modifier et Supprimer bien rangés. Une tâche terminée est barrée et plus pâle.
+- Des boutons cohérents : un style principal (Ajouter, Se connecter, Créer le compte), un style secondaire (Annuler, Modifier) et un style rouge pour Supprimer.
+- La jauge du mot de passe en vraie barre qui se remplit (rouge, orange, vert), avec le texte du niveau à côté.
+- Les couleurs définies une seule fois en haut de style.css, avec des variables CSS. Une palette sobre : un fond clair, une couleur principale, et les trois couleurs des catégories.
+- Un contour visible quand on navigue au clavier (focus), et des textes bien lisibles (bon contraste).
+- Ça doit rester bien sur un écran de téléphone.
+
+Contraintes :
+- Surtout du CSS. Dans index.html et app.js, tu peux seulement ajouter des classes ou des balises pour la mise en page. Ne change aucun id, aucune fonction, aucune logique, et rien dans auth.js et storage.js.
+- Si tu dois créer les étiquettes de priorité et de catégorie dans app.js, utilise toujours createElement et textContent.
+- Pas de bibliothèque, pas de framework CSS, pas de police à télécharger : une police système suffit.
+- Reste simple : un style.css qu'on peut lire et expliquer.
+
+À la fin, donne-moi la liste des fichiers modifiés, ce que tu as changé dans index.html et app.js (s'il y a des changements), et 3 choses à vérifier dans le navigateur, dont l'affichage sur téléphone.
+```
+
+**Résultat :**
+```
+Plan : relire style.css et la jauge dans auth.js, réécrire le CSS, ajouter seulement des balises et classes, puis tester sur ordinateur et téléphone.
+
+Test dans le vrai navigateur : création de compte, tâches, puis écrans ordinateur et téléphone.
+
+127.0.0.1:5599
+127.0.0.1:5599, ouvert dans le navigateur
+
+Défaut trouvé : sur téléphone, « designtest » est coupé alors que le nom est court. Le texte passe maintenant à la ligne, et la coupure « … » reste seulement sur ordinateur.
+
+Design refait, fonctionnement inchangé. auth.js et storage.js intacts, aucun id changé, aucun commit.
+
+Fichiers modifiés
+style.css : réécrit, couleurs en variables dans :root.
+index.html
+app.js
+Changements dans index.html
+<h1> placé dans <header class="barre-haut">.
+Classes carte carte-centree sur les écrans de connexion et d’inscription, carte sur #formulaire-filtres.
+Classe bouton-principal sur Se connecter, Créer le compte et Ajouter.
+Nouvelles <div> autour d’éléments existants :
+.barre-compte : « Connecté en tant que… » et Se déconnecter.
+.carte : titre et formulaire d’ajout.
+.actions-formulaire : Ajouter et Annuler.
+
+Le bloc compte reste dans #ecran-taches, donc il se cache avec cet écran sans aucune logique. Le CSS le place visuellement dans la barre.
+
+Changements dans app.js
+
+Uniquement dans afficherTaches, sans nouvelle fonction :
+
+Priorité, catégorie et échéance vont dans une div.tache-infos.
+Priorité et catégorie reçoivent les classes d’étiquette. Elles sont créées avec creerParagraphe, donc createElement et textContent.
+Modifier et Supprimer vont dans une div.tache-actions.
+Supprimer reçoit la classe bouton-danger.
+
+La jauge n’a demandé aucun changement de JS : la barre est dessinée par #jauge::before dans le CSS.
+
+À vérifier dans le navigateur
+Téléphone : outils développeur (F12), mode appareil en 375 px. Le compte passe sur une ligne sous TaskFlow, les filtres s’empilent, rien ne déborde sur le côté.
+Clavier : avec Tab, chaque champ, lien, case et bouton a un contour violet.
+Tâches et jauge :
+Cocher une tâche : elle devient barrée et grise.
+Cliquer Modifier : le bouton Annuler apparaît, puis disparaît après Annuler.
+Cas limite : à l’inscription, taper un mot de passe de plus en plus complet. La barre passe de rouge à orange puis vert, avec le niveau à côté.
+
+Testé en local sur ordinateur et en 375 px : ajout, modification, annulation, suppression, filtre, déconnexion, contrastes tous ≥ 5:1, aucune erreur console. Je n’ai pas testé la coupure « … » d’un identifiant très long sur ordinateur, ni sur un vrai téléphone. Risque : la largeur 375 px est une simulation, et le sélecteur de date varie selon le téléphone.
+```
+
+Fichiers modifiés : style.css, index.html, app.js.
+
+**Gardé :** tout. L'app est plus belle et plus claire : une barre en haut, des cartes, des étiquettes de couleur pour la priorité et la catégorie, une vraie barre pour la jauge, et des boutons de trois styles. Les couleurs sont écrites une seule fois en haut du CSS, donc faciles à changer.
+
+**Remarqué :** il n'a touché ni à la sécurité ni à la sauvegarde, et il n'a rien changé au fonctionnement, seulement l'affichage. En testant sur téléphone, il a trouvé et corrigé tout seul un nom coupé.
+
+**Vérifié :** on a refait ses tests (téléphone, clavier, jauge), puis nos tests habituels : connexion, ajout, filtres, blocage. Tout marche comme avant.
+
+**Pourquoi :** le prof nous a demandé d'améliorer le visuel. On a demandé de ne changer que l'apparence, pour ne pas risquer de casser ce qui marchait.
+
 ## Bilan de la séance 2
 
 - **Ce qui a marché :** avancer étape par étape. Il testait tout seul et nous prévenait de ses ajouts et de ses limites.
